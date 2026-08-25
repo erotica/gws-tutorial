@@ -1,0 +1,959 @@
+<title>중급 UC30 · Gemini Notebook을 활용한 근거 기반 사내 규정 및 매뉴얼 AI 질의응답 노트북 구축 — 화면 가이드</title>
+<style id="page-style">
+  :root {
+    --ground:      #F4F6F9;
+    --surface:     #FFFFFF;
+    --surface-2:   #EDF0F5;
+    --ink:         #161A22;
+    --ink-2:       #545C6E;
+    --ink-3:       #8992A4;
+    --line:        #DDE2EA;
+    --line-2:      #C8CFDA;
+    --accent:      #1A56A8;
+    --accent-2:    #2C6FC4;
+    --accent-soft: #E6EDF8;
+    --ok:          #1B7A4B;
+    --ok-soft:     #E3F3EA;
+    --warn:        #9A5B0C;
+    --warn-soft:   #FBEFDC;
+    --annot:       #D93A40;
+
+    --mk-chrome:  #F0F2F6;
+    --mk-panel:   #FFFFFF;
+    --mk-field:   #F5F7FA;
+    --mk-line:    #D9DFE8;
+    --mk-ink:     #22272F;
+    --mk-ink2:    #6B7385;
+    --mk-blue:    #1A73E8;
+
+    --sans: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo",
+            "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "D2Coding", ui-monospace, "Cascadia Mono", Consolas,
+            "Courier New", monospace;
+
+    --maxw: 46rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #101319;
+      --surface:     #171B23;
+      --surface-2:   #1E232D;
+      --ink:         #E6E9EF;
+      --ink-2:       #9AA3B4;
+      --ink-3:       #6C7486;
+      --line:        #272D38;
+      --line-2:      #333B48;
+      --accent:      #74A6EA;
+      --accent-2:    #5B90DA;
+      --accent-soft: #1A2434;
+      --ok:          #55C08A;
+      --ok-soft:     #12261C;
+      --warn:        #D69A4B;
+      --warn-soft:   #2A2013;
+      --annot:       #F0656A;
+
+      --mk-chrome:  #1C212B;
+      --mk-panel:   #141821;
+      --mk-field:   #1F2530;
+      --mk-line:    #2E3644;
+      --mk-ink:     #D8DDE6;
+      --mk-ink2:    #8C95A6;
+      --mk-blue:    #6BA5F0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:      #101319;
+    --surface:     #171B23;
+    --surface-2:   #1E232D;
+    --ink:         #E6E9EF;
+    --ink-2:       #9AA3B4;
+    --ink-3:       #6C7486;
+    --line:        #272D38;
+    --line-2:      #333B48;
+    --accent:      #74A6EA;
+    --accent-2:    #5B90DA;
+    --accent-soft: #1A2434;
+    --ok:          #55C08A;
+    --ok-soft:     #12261C;
+    --warn:        #D69A4B;
+    --warn-soft:   #2A2013;
+    --annot:       #F0656A;
+
+    --mk-chrome:  #1C212B;
+    --mk-panel:   #141821;
+    --mk-field:   #1F2530;
+    --mk-line:    #2E3644;
+    --mk-ink:     #D8DDE6;
+    --mk-ink2:    #8C95A6;
+    --mk-blue:    #6BA5F0;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+  }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* ---------- shell ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0 1.25rem 6rem;
+  }
+  @media (min-width: 1100px) {
+    .shell { grid-template-columns: 5rem minmax(0, 1fr); gap: 2.5rem; padding-left: 2rem; }
+  }
+
+  /* ---------- step rail ---------- */
+  .rail { display: none; }
+  @media (min-width: 1100px) {
+    .rail {
+      display: block;
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+      padding-top: 15rem;
+    }
+    .rail-title {
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: .75rem;
+      font-weight: 600;
+    }
+    .rail ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .1rem; }
+    .rail a {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink-3);
+      text-decoration: none;
+      padding: .2rem .35rem;
+      border-left: 2px solid var(--line);
+      transition: color .15s, border-color .15s;
+    }
+    .rail a:hover { color: var(--accent); border-left-color: var(--accent); }
+    .rail li.shot a { color: var(--ink-2); border-left-color: var(--line-2); font-weight: 600; }
+    .rail .cam { width: 11px; height: 11px; flex: none; color: var(--accent); }
+    .rail li:not(.shot) .cam { visibility: hidden; }
+  }
+
+  main { min-width: 0; }
+
+  /* ---------- masthead ---------- */
+  .masthead { padding: 3.5rem 0 0; }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+  }
+  .eyebrow .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--line-2); }
+  .uc-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: .15rem .5rem;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: clamp(1.55rem, 1.1rem + 1.7vw, 2.1rem);
+    line-height: 1.32;
+    letter-spacing: -.015em;
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+    text-wrap: balance;
+  }
+  .lede {
+    font-size: 1rem;
+    color: var(--ink-2);
+    margin: 0 0 2rem;
+    max-width: 40rem;
+  }
+
+  /* ---------- meta ---------- */
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+  .meta div { background: var(--surface); padding: .8rem .9rem; }
+  .meta dt {
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: .2rem;
+  }
+  .meta dd { margin: 0; font-size: 13.5px; font-weight: 600; line-height: 1.5; }
+  .meta dd .sub { font-weight: 400; color: var(--ink-2); font-size: 12px; }
+  .dots { display: inline-flex; gap: 3px; vertical-align: middle; margin-left: .35rem; }
+  .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line-2); display: block; }
+  .dots i.on { background: var(--accent); }
+
+  /* ---------- notice ---------- */
+  .notice {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--warn);
+    background: var(--warn-soft);
+    border-radius: 4px;
+    padding: .9rem 1.1rem;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 3rem;
+  }
+  .notice b { color: var(--warn); }
+
+  /* ---------- sections ---------- */
+  section { margin-bottom: 3.5rem; }
+  h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin: 0 0 .35rem;
+    padding-bottom: .6rem;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    gap: .6rem;
+  }
+  h2 .h2-note {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-3);
+    letter-spacing: 0;
+    margin-left: auto;
+  }
+  section > p:first-of-type { margin-top: 1.1rem; }
+  p { margin: 0 0 1rem; }
+
+  .prep { list-style: none; margin: 1.1rem 0 0; padding: 0; display: grid; gap: .55rem; }
+  .prep li {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: .8rem;
+    font-size: 14px;
+    align-items: baseline;
+  }
+  .prep .k {
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+  }
+  code {
+    font-family: var(--mono);
+    font-size: .86em;
+    background: var(--surface-2);
+    padding: .1em .38em;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  /* ---------- key path ---------- */
+  .keypath {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: .6rem;
+    margin-top: 1.2rem;
+  }
+  .kp {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: .65rem .7rem .7rem;
+    transition: border-color .15s, transform .15s;
+  }
+  .kp:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .kp svg { display: block; width: 100%; height: auto; margin-bottom: .5rem; border-radius: 3px; }
+  .kp .n {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--accent);
+    display: block;
+  }
+  .kp .t { font-size: 12.5px; font-weight: 600; line-height: 1.45; display: block; }
+
+  /* ---------- steps ---------- */
+  .steps { margin-top: 1.6rem; display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: grid;
+    grid-template-columns: 3.1rem minmax(0, 1fr);
+    gap: 0 1rem;
+    padding: 1.4rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .step:first-child { border-top: none; padding-top: .4rem; }
+  .step-n {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-3);
+    line-height: 1.7;
+    letter-spacing: .02em;
+  }
+  .step.shot .step-n { color: var(--accent); }
+  .step-n .cam { display: block; width: 13px; height: 13px; margin-top: .3rem; color: var(--accent); }
+  .step-b { min-width: 0; }
+  .step-b > p { margin: 0; font-size: 14.5px; }
+  .step-b > p + p { margin-top: .5rem; }
+
+  .check {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .5rem;
+    align-items: start;
+    margin-top: .7rem;
+    padding: .5rem .7rem;
+    background: var(--ok-soft);
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .check .ck { color: var(--ok); flex: none; width: 14px; height: 14px; margin-top: .28rem; }
+  .check b { color: var(--ok); font-weight: 600; }
+
+  /* ---------- figure / mockup ---------- */
+  figure {
+    margin: .9rem 0 0;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .fig-bar {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .7rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+    font-size: 11px;
+    color: var(--ink-2);
+    flex-wrap: wrap;
+  }
+  .tag-mock {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: var(--warn);
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    padding: 0 .3em;
+    flex: none;
+  }
+  .fig-file { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); margin-left: auto; }
+  .fig-wrap { overflow-x: auto; padding: .9rem; background: var(--surface-2); }
+  .fig-wrap svg { display: block; width: 100%; min-width: 30rem; height: auto; }
+  .fig-wrap img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 3px;
+    border: 1px solid var(--line);
+  }
+  figcaption {
+    padding: .55rem .8rem;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  /* mockup internals */
+  svg.mock { font-family: var(--sans); }
+  svg.mock .w   { fill: var(--mk-panel); stroke: var(--mk-line); }
+  svg.mock .ch  { fill: var(--mk-chrome); }
+  svg.mock .fd  { fill: var(--mk-field); stroke: var(--mk-line); }
+  svg.mock .ln  { stroke: var(--mk-line); stroke-width: 1; }
+  svg.mock .t1  { fill: var(--mk-ink); font-size: 12px; }
+  svg.mock .t2  { fill: var(--mk-ink2); font-size: 11px; }
+  svg.mock .tb  { fill: var(--mk-ink); font-size: 12px; font-weight: 700; }
+  svg.mock .bl  { fill: var(--mk-blue); }
+  svg.mock .blt { fill: var(--mk-blue); font-size: 11px; }
+  svg.mock .mono{ font-family: var(--mono); font-size: 10.5px; fill: var(--mk-ink); }
+  svg.mock .an  { fill: none; stroke: var(--annot); stroke-width: 2; }
+  svg.mock .ab  { fill: var(--annot); }
+  svg.mock .abt { fill: #fff; font-size: 11px; font-weight: 700; text-anchor: middle; font-family: var(--mono); }
+
+  /* ---------- record form pointer ---------- */
+  .record-ref {
+    margin-top: 1.2rem;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    background: var(--surface);
+    padding: 1.1rem 1.2rem;
+  }
+  .rr-lead { margin: 0 0 1rem; font-size: 14px; }
+  .rr-meta {
+    margin: 0 0 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: .75rem 1.5rem;
+  }
+  .rr-meta div { min-width: 0; }
+  .rr-meta dt {
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: .15rem;
+  }
+  .rr-meta dd { margin: 0; font-size: 13.5px; line-height: 1.6; }
+  .rr-note { margin: 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.7; }
+
+  /* ---------- trouble ---------- */
+  .trouble { margin-top: 1.2rem; display: flex; flex-direction: column; gap: .1rem; }
+  .tr {
+    border-top: 1px solid var(--line);
+    padding: .9rem 0;
+    display: grid;
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    gap: .3rem 1.2rem;
+  }
+  .tr:first-child { border-top: none; }
+  .tr dt { font-size: 13.5px; font-weight: 600; line-height: 1.6; }
+  .tr dd { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.7; }
+  @media (max-width: 40rem) { .tr { grid-template-columns: 1fr; } }
+
+  /* ---------- links ---------- */
+  .links { list-style: none; margin: 1.2rem 0 0; padding: 0; display: flex; flex-direction: column; gap: .1rem; }
+  .links li { border-top: 1px solid var(--line); }
+  .links li:first-child { border-top: none; }
+  .links a {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr auto;
+    gap: .9rem;
+    align-items: baseline;
+    padding: .7rem .2rem;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .links a:hover .lt { color: var(--accent); text-decoration: underline; }
+  .links .lk {
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+  .links .arr { color: var(--ink-3); font-size: 12px; }
+
+  /* ---------- review box ---------- */
+  .review {
+    border: 1px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 7px;
+    padding: 1.2rem 1.3rem;
+  }
+  .review h3 { margin: 0 0 .2rem; font-size: 14px; font-weight: 700; color: var(--accent); }
+  .review p { font-size: 13px; color: var(--ink-2); margin: 0 0 .8rem; }
+  .review ol { margin: 0; padding-left: 1.2rem; font-size: 13.5px; line-height: 1.85; }
+  .review ol li::marker { color: var(--accent); font-weight: 700; }
+
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-3);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  footer .mono { font-family: var(--mono); }
+
+  /* ---------- 캡처 교체 · 주석 배치 ---------- */
+  .shot-box { position: relative; line-height: 0; }
+  .shot-box img { display: block; width: 100%; height: auto; border-radius: 3px; border: 1px solid var(--line); }
+
+  .annot {
+    position: absolute;
+    border: 3px solid var(--annot);
+    border-radius: 6px;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  .annot-badge {
+    position: absolute;
+    left: 0; top: 0;
+    transform: translate(-50%, -50%);
+    width: 1.9rem; height: 1.9rem;
+    border-radius: 50%;
+    background: var(--annot);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: .78rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+  }
+  .annot-handle, .annot-del { display: none; }
+
+  body.editor .fig-wrap { cursor: pointer; }
+  body.editor .fig-wrap.dropping {
+    outline: 2px dashed var(--accent);
+    outline-offset: -6px;
+    background: var(--accent-soft);
+  }
+  body.editor .annot { pointer-events: auto; cursor: move; }
+  body.editor .annot-handle {
+    display: block; position: absolute; right: -8px; bottom: -8px;
+    width: 15px; height: 15px; border-radius: 3px;
+    background: var(--surface); border: 2px solid var(--annot);
+    cursor: nwse-resize;
+  }
+  body.editor .annot-del {
+    display: grid; position: absolute; right: -10px; top: -10px;
+    width: 19px; height: 19px; border-radius: 50%; padding: 0;
+    background: var(--ink); color: var(--surface);
+    font-size: 12px; line-height: 1; place-items: center;
+    cursor: pointer; border: none;
+  }
+  .fig-hint { font-size: 11px; color: var(--ink-3); }
+
+  .editor-bar {
+    position: fixed; right: 1rem; bottom: 1rem; z-index: 50;
+    background: var(--surface); border: 1px solid var(--line-2);
+    border-radius: 8px; box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
+    padding: .75rem .85rem; display: flex; flex-direction: column; gap: .5rem;
+    max-width: 15.5rem; font-size: 12px;
+  }
+  .editor-bar strong { font-size: 12px; display: block; }
+  .editor-bar p { margin: 0; color: var(--ink-2); font-size: 11px; line-height: 1.6; }
+  .editor-bar .row { display: flex; gap: .4rem; }
+  .editor-bar button {
+    font: inherit; font-weight: 600; cursor: pointer; flex: 1;
+    border-radius: 5px; padding: .4rem .5rem;
+    border: 1px solid var(--line-2); background: var(--surface-2); color: var(--ink);
+  }
+  .editor-bar button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .editor-bar button:disabled { opacity: .45; cursor: not-allowed; }
+  .editor-bar .count { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--accent); }
+
+  @media print {
+    .rail, .review, .keypath, .editor-bar { display: none; }
+    body { background: #fff; font-size: 11pt; }
+    .step { break-inside: avoid; }
+    figure { break-inside: avoid; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  /* 실제 캡처: 상자를 이미지에 맞추고 가운데 정렬한다.
+     열 폭보다 큰 캡처는 줄이되, 원본보다 크게 늘리지는 않는다.
+     (예전에는 목업 viewBox 비율로 높이를 강제해 세로 비율 캡처가 확대됐다) */
+  .fig-wrap .shot-box {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;          /* 목업 SVG 의 가로 스크롤을 건드리지 않고 가운데 정렬 */
+    background: var(--surface); border-radius: 3px;
+  }
+  .fig-wrap .shot-box img {
+    width: auto;
+    height: auto;
+    max-width: min(100%, var(--fig-w, 100%));
+    border: 1px solid var(--line); border-radius: 3px;
+  }
+  .step-more {
+    margin-top: .5rem !important;
+    padding-left: .7rem;
+    border-left: 2px solid var(--line-2);
+    color: var(--ink-2);
+    font-size: 13.5px !important;
+  }
+  .step-more b { color: var(--ink); }
+  /* 섹션 접기 — 스크립트 없이 CSS 만으로 동작해야 내보낸 HTML 에서도 살아 있다.
+     체크박스를 섹션 안에 두어 형제 선택자만으로 그 섹션의 본문을 여닫는다.
+     본문을 .sec-body 로 감싸므로 .prep(grid)·.trouble(flex) 의 display 를 건드리지 않는다. */
+  .sec-cb {
+    position: absolute; width: 1px; height: 1px; margin: -1px;
+    padding: 0; border: 0; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+  .sec-cb ~ .sec-body { display: none; }
+  .sec-cb:checked ~ .sec-body { display: block; }
+  .sec-tog {
+    margin-left: auto; font-size: 11px; font-weight: 500; letter-spacing: 0;
+    color: var(--ink-3); cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+  }
+  .sec-tog:hover { color: var(--accent); }
+  .sec-tog .t-close { display: none; }
+  .sec-cb:checked ~ h2 .sec-tog .t-open { display: none; }
+  .sec-cb:checked ~ h2 .sec-tog .t-close { display: inline; }
+  .sec-cb:focus-visible ~ h2 .sec-tog { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media print {
+    /* 인쇄본에는 토글이 없다. 접힌 채로 뽑히지 않도록 항상 펼친다. */
+    .sec-cb ~ .sec-body { display: block !important; }
+    .sec-tog { display: none; }
+  }
+
+  /* 확인 방법 — 단계 목록과 같은 격자를 쓰되 번호 자리에 체크 표시를 둔다. */
+  .steps.verify { margin-top: 1.4rem; }
+  .vstep .step-n { color: var(--ok); }
+  .vstep .step-n .ck { display: block; width: 15px; height: 15px; }
+  .vstep .step-b > p { font-weight: 500; }
+  .vstep.vtail { padding-top: .2rem; border-top: none; }
+  .vstep.vtail .step-b > .step-more { margin-top: 0 !important; }
+  .kp .n { font-variant-numeric: tabular-nums; }
+  .pager {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; margin-top: 3rem; padding-top: 1.2rem;
+    border-top: 1px solid var(--line); font-size: 13px;
+  }
+  .pager a { text-decoration: none; font-weight: 600; }
+  .pager a:hover { text-decoration: underline; }
+  .pager .off { color: var(--ink-3); }
+</style>
+
+<div class="shell">
+  <nav class="rail" aria-label="단계 바로가기">
+    <div class="rail-title">Steps</div>
+    <ol><li class=""><a href="#step-1"><span>01</span></a></li><li class="shot"><a href="#step-2"><span>02</span></a></li><li class=""><a href="#step-3"><span>03</span></a></li><li class="shot"><a href="#step-4"><span>04</span></a></li><li class="shot"><a href="#step-5"><span>05</span></a></li><li class=""><a href="#step-6"><span>06</span></a></li><li class=""><a href="#step-7"><span>07</span></a></li><li class=""><a href="#step-8"><span>08</span></a></li><li class=""><a href="#step-9"><span>09</span></a></li><li class="shot vrail"><a href="#verify"><span>확인</span></a></li></ol>
+  </nav>
+
+  <main>
+    <header class="masthead">
+      <p class="eyebrow"><span>GWS 검증 시나리오 2</span><span class="sep"></span>
+        <span>중급</span><span class="sep"></span>
+        <span class="uc-id">MID-30</span></p>
+      <h1>Gemini Notebook을 활용한 근거 기반 사내 규정 및 매뉴얼 AI 질의응답 노트북 구축</h1>
+      <p class="lede">사내 규정과 업무 매뉴얼 문서를 자료로 등록해 정확한 조항과 출처 인용이 포함된 답변을 제공하는 부서 전용 지식 AI 노트북을 구성할 수 있는지 확인해 보세요.</p>
+      <dl class="meta">
+        <div><dt>대상 서비스</dt><dd>Gemini Notebook (구 NotebookLM)</dd></div>
+        <div><dt>필요 에디션</dt><dd>별도 확인 필요
+          <span class="sub">Workspace 계정 지원 범위·지역 제한 있음</span></dd></div>
+        <div><dt>예상 소요</dt><dd>55분</dd></div>
+        <div><dt>난이도</dt><dd>중하
+          <span class="dots" role="img" aria-label="3단계 중 1단계"><i class="on"></i><i></i><i></i></span></dd></div>
+      </dl>
+    </header>
+
+    <section aria-labelledby="h-prep"><input type="checkbox" id="prep-open" class="sec-cb" aria-label="사전 준비 펼치기"><h2 id="h-prep">사전 준비<label class="sec-tog" for="prep-open"><span class="t-open">펼치기</span><span class="t-close">접기</span></label></h2><div class="sec-body"><ul class="prep"><li><span class="k">계정</span><span>노트북 소유자 1개 + 공유 확인용 팀원 계정 2개</span></li><li><span class="k">샘플 데이터</span><span>사내 규정·매뉴얼 <b>5건 이상</b> (Docs·PDF 혼합) + 참고 웹 URL 1~2건. 5건 이상이어야 자동 분류를 볼 수 있습니다</span></li><li><span class="k">선행</span><span><b>실제 업무 질문 목록을 미리 준비</b>합니다. &#x27;출장비 정산 절차&#x27; 처럼 답이 규정에 있는 질문이어야 인용 정확도를 검증할 수 있습니다</span></li><li><span class="k">주의</span><span>규정 원문에 없는 내용은 답하지 않는 것이 <b>정상 동작</b>입니다. 모른다고 답하면 오히려 신뢰할 수 있습니다</span></li></ul></div></section>
+
+    <section aria-labelledby="h-steps">
+      <h2 id="h-steps">단계별 수행 <span class="h2-note">전체 9단계</span></h2>
+      <div class="steps"><article class="step" id="step-1"><div class="step-n">01</div><div class="step-b"><p>Gemini Notebook(구 NotebookLM)에 접속하여 &#x27;새 노트북&#x27;을 클릭해 지식 관리 프로젝트를 생성하세요.</p></div></article><article class="step shot" id="step-2"><div class="step-n">02</div><div class="step-b"><p>&#x27;소스 추가&#x27; 버튼을 눌러 Google Drive에 보관 중인 사내 규정 Docs, Slides, PDF 파일 및 참고 웹 URL 주소를 업로드해 줍니다.</p><p class="step-more">Drive 문서와 웹 URL 을 함께 소스로 넣을 수 있습니다. 업로드 후 <b>색인 처리에 시간이 걸립니다.</b></p><figure data-shot="step-02" data-step="2" data-annots="1"><div class="fig-bar"><span class="tag-mock">MOCKUP</span><span class="fig-hint" data-editor>클릭 또는 이미지 드롭</span><span>노트북 — Drive 문서·PDF·웹 URL 등록</span><span class="fig-file">mid-30/step-02.png</span></div><div class="fig-wrap"><svg class="mock" viewBox="0 0 760 286" role="img" aria-label="UC30 Step 2 — 노트북 — Drive 문서·PDF·웹 URL 등록"><rect class="w" x="0.5" y="0.5" width="759" height="285" rx="8"/><path class="ch" d="M1 9a8 8 0 018-8h742a8 8 0 018 8v35H1z"/><text class="tb" x="24" y="29" font-size="14">사내 규정 노트북</text><text class="t2" x="736" y="29" text-anchor="end">Gemini Notebook</text><line class="ln" x1="1" y1="44" x2="759" y2="44"/><text class="t2" x="24" y="70" font-size="10">소스</text><text class="t2" x="450" y="70" font-size="10">유형</text><text class="t2" x="590" y="70" font-size="10">상태</text><line class="ln" x1="24" y1="80" x2="736" y2="80"/><circle cx="28" cy="96" r="5" fill="#1A73E8"/><text class="t1" x="42" y="101" font-size="11">출장비 정산 지침.docx</text><text class="t2" x="450" y="101">Docs</text><text class="t2" x="590" y="101">처리 완료</text><line class="ln" x1="24" y1="112" x2="736" y2="112"/><circle cx="28" cy="128" r="5" fill="#D93025"/><text class="t1" x="42" y="133" font-size="11">복리후생 규정.pdf</text><text class="t2" x="450" y="133">PDF</text><text class="t2" x="590" y="133">처리 완료</text><line class="ln" x1="24" y1="144" x2="736" y2="144"/><circle cx="28" cy="160" r="5" fill="#1A73E8"/><text class="t1" x="42" y="165" font-size="11">구매 업무 매뉴얼.docx</text><text class="t2" x="450" y="165">Docs</text><text class="t2" x="590" y="165">처리 완료</text><line class="ln" x1="24" y1="176" x2="736" y2="176"/><circle cx="28" cy="192" r="5" fill="#D93025"/><text class="t1" x="42" y="197" font-size="11">취업 규칙.pdf</text><text class="t2" x="450" y="197">PDF</text><text class="t2" x="590" y="197">처리 중</text><line class="ln" x1="24" y1="208" x2="736" y2="208"/><circle cx="28" cy="224" r="5" fill="#188038"/><text class="t1" x="42" y="229" font-size="11">사내 포털 안내</text><text class="t2" x="450" y="229">웹 URL</text><text class="t2" x="590" y="229">처리 완료</text><line class="ln" x1="24" y1="240" x2="736" y2="240"/><text class="t2" x="24" y="254" font-size="11">소스 5개 이상 — 자동 분류 적용됨</text><rect class="an" x="8" y="72" width="744" height="176" rx="6"/><circle class="ab" cx="8" cy="72" r="13"/><text class="abt" x="8" y="76">2</text></svg></div><figcaption><b>색인 처리에 시간이 걸립니다.</b> 업로드 직후 질문하면 소스를 못 찾았다고 답할 수 있습니다. 소스 목록에 처리 완료 표시가 뜬 뒤 시작하세요.</figcaption></figure></div></article><article class="step" id="step-3"><div class="step-n">03</div><div class="step-b"><p>소스 자료를 5개 이상 넣으면 자동으로 라벨이 붙고 분류됩니다. 내용을 확인해보고 사용하지 않을 소스는 체크를 살짝 해제해 주면 됩니다.</p></div></article><article class="step shot" id="step-4"><div class="step-n">04</div><div class="step-b"><p>하단 채팅창에 업무와 관련된 질문(예: &quot;해외 출장 숙박비 정산 한도 및 절차는?&quot;)을 편하게 입력해 질의응답을 시작해 보세요.</p><p class="step-more">일반 챗봇과 다릅니다. <b>등록한 소스 안에서만</b> 답하므로 사내 규정 질의에 적합합니다.</p><figure data-shot="step-04" data-step="4" data-annots="1"><div class="fig-bar"><span class="tag-mock">MOCKUP</span><span class="fig-hint" data-editor>클릭 또는 이미지 드롭</span><span>채팅 패널 — 소스 기반 질의응답</span><span class="fig-file">mid-30/step-04.png</span></div><div class="fig-wrap"><svg class="mock" viewBox="0 0 760 228" role="img" aria-label="UC30 Step 4 — 채팅 패널 — 소스 기반 질의응답"><rect class="w" x="0.5" y="0.5" width="759" height="227" rx="8"/><path class="ch" d="M1 9a8 8 0 018-8h742a8 8 0 018 8v35H1z"/><text class="tb" x="24" y="29" font-size="14">사내 규정 노트북 — 채팅</text><line class="ln" x1="1" y1="44" x2="759" y2="44"/><text class="tb" x="24" y="66" font-size="11">국내 출장 일비 기준과 정산 기한을 알려줘</text><line class="ln" x1="24" y1="78" x2="736" y2="78"/><text class="t1" x="24" y="100" font-size="11">국내 출장 일비는 직급별 2만~3만 5천원입니다 [1].</text><line class="ln" x1="24" y1="112" x2="736" y2="112"/><text class="t1" x="24" y="134" font-size="11">정산은 출장 종료 후 7일 이내 제출해야 합니다 [2].</text><line class="ln" x1="24" y1="146" x2="736" y2="146"/><text class="t1" x="24" y="168" font-size="11">초과 시 익월 급여에서 정산됩니다 [2].</text><line class="ln" x1="24" y1="180" x2="736" y2="180"/><text class="blt" x="24" y="196" font-size="11">인용 번호 [1] [2] 를 클릭하면 원문으로 이동합니다</text><rect class="an" x="8" y="36" width="744" height="152" rx="6"/><circle class="ab" cx="8" cy="36" r="13"/><text class="abt" x="8" y="40">4</text></svg></div><figcaption><b>등록한 소스 안에서만 답합니다.</b> 일반 챗봇처럼 아무 말이나 만들어내지 않습니다. 규정에 없는 질문에는 모른다고 답하는 것이 정상이며, 오히려 신뢰의 근거입니다.</figcaption></figure></div></article><article class="step shot" id="step-5"><div class="step-n">05</div><div class="step-b"><p>생성된 답변 내 출처 인용 칩을 클릭하여 원본 문서의 정확한 출처 위치와 내용을 대조 검증합니다.</p><p class="step-more"><b>인용 번호를 클릭하면 원문 위치로 이동합니다.</b> 이것이 이 도구의 핵심 가치입니다. 근거를 확인할 수 없는 답변은 규정 업무에 쓸 수 없습니다.</p><figure data-shot="step-05" data-step="5" data-annots="1"><div class="fig-bar"><span class="tag-mock">MOCKUP</span><span class="fig-hint" data-editor>클릭 또는 이미지 드롭</span><span>인용 번호 — 원문 근거 위치 확인</span><span class="fig-file">mid-30/step-05.png</span></div><div class="fig-wrap"><svg class="mock" viewBox="0 0 760 276" role="img" aria-label="UC30 Step 5 — 인용 번호 — 원문 근거 위치 확인"><rect class="w" x="0.5" y="0.5" width="759" height="275" rx="8"/><path class="ch" d="M1 9a8 8 0 018-8h742a8 8 0 018 8v35H1z"/><text class="tb" x="24" y="29" font-size="14">인용 [1] — 출장비 정산 지침.docx</text><line class="ln" x1="1" y1="44" x2="759" y2="44"/><rect x="40.5" y="58.5" width="679" height="166" rx="10" class="w" /><g transform="translate(40,58)"><text class="tb" x="24" y="34" font-size="12">제3조 (일비)</text><text class="t1" x="24" y="59" font-size="11">② 국내 출장 시 일비는 다음과 같이 지급한다.</text><line class="ln" x1="24" y1="68" x2="656" y2="68"/><text class="t1" x="24" y="87" font-size="11">   1. 부장급 이상: 35,000원</text><line class="ln" x1="24" y1="96" x2="656" y2="96"/><text class="t1" x="24" y="115" font-size="11">   2. 과장·차장급: 30,000원</text><line class="ln" x1="24" y1="124" x2="656" y2="124"/><text class="t1" x="24" y="143" font-size="11">   3. 대리급 이하: 20,000원</text><line class="ln" x1="24" y1="152" x2="656" y2="152"/></g><text class="t2" x="24" y="244" font-size="11">답변의 근거가 된 정확한 조항으로 이동합니다</text><rect class="an" x="48" y="90" width="664" height="128" rx="6"/><circle class="ab" cx="48" cy="90" r="13"/><text class="abt" x="48" y="94">5</text></svg></div><figcaption><b>이 기능이 이 도구를 쓸 이유입니다.</b> 근거를 확인할 수 없는 답변은 규정 업무에 쓸 수 없습니다. 인용이 실제 조항을 정확히 가리키는지 반드시 검증해야 합니다.</figcaption></figure></div></article><article class="step" id="step-6"><div class="step-n">06</div><div class="step-b"><p>스튜디오 패널 기능을 활용해 보세요. 업로드한 규정 문서들을 바탕으로 FAQ 가이드, 요약 브리핑, 마인드맵 구조를 알아서 순식간에 만들어 줍니다.</p></div></article><article class="step" id="step-7"><div class="step-n">07</div><div class="step-b"><p>도움이 되는 유용한 답변 카드는 &#x27;메모로 저장&#x27;을 눌러두세요. 필요하다면 이 메모들을 클릭 한 번으로 Google Docs 문서나 Sheets로 내보낼 수 있습니다.</p></div></article><article class="step" id="step-8"><div class="step-n">08</div><div class="step-b"><p>팟캐스트 느낌의 &#x27;오디오 개요(Audio Overview)&#x27; 기능을 실행해 보세요. 귀로 듣는 음성 브리핑이 생성되어 교육 자료로 활하기에 정말 좋습니다.</p></div></article><article class="step" id="step-9"><div class="step-n">09</div><div class="step-b"><p>알차게 완성된 규정 지식 노트북을 부서 팀원들에게 공유하세요. 필요에 따라 뷰어 또는 편집자 권한을 정교하게 나누어 부여하시면 됩니다.</p></div></article></div>
+    </section>
+
+    <section aria-labelledby="h-verify"><h2 id="h-verify">확인 방법 <span class="h2-note">최종 결과 1개</span></h2><div class="steps verify"><article class="step vstep" id="verify"><div class="step-n"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-b"><p>사내 규정 문서를 개정하여 소스 자료를 업데이트해 보세요. 질의응답 시 개정된 내용으로 정확히 답변이 바뀌고 인용 출처도 새 조항을 잘 가리키는지 확인합니다.</p></div></article></div></section>
+
+    <section aria-labelledby="h-tr"><input type="checkbox" id="trouble-open" class="sec-cb" aria-label="자주 겪는 오류 펼치기"><h2 id="h-tr">자주 겪는 오류<label class="sec-tog" for="trouble-open"><span class="t-open">펼치기</span><span class="t-close">접기</span></label></h2><div class="sec-body"><dl class="trouble"><div class="tr"><dt>Workspace 계정으로 접속이 안 됨</dt><dd>Gemini Notebook 의 Workspace 계정 지원 범위와 지역 제공 여부를 먼저 확인해야 합니다. 관리 콘솔에서 차단된 경우도 있습니다. 미지원이면 <b>해당없음</b>으로 판정하고 확인 시점을 비고에 남깁니다.</dd></div><div class="tr"><dt>소스를 넣었는데 못 찾는다고 답함</dt><dd>색인 처리가 끝나지 않았습니다. 소스 목록에 처리 완료 표시가 뜬 뒤 질문하세요. 스캔 PDF 는 텍스트 추출이 안 되면 내용을 읽지 못합니다.</dd></div><div class="tr"><dt>규정에 있는 내용인데 모른다고 답함</dt><dd>표가 복잡하거나 이미지로 된 조항은 인식이 어렵습니다. 해당 부분을 텍스트로 정리한 보조 문서를 소스에 추가하면 개선됩니다.</dd></div><div class="tr"><dt>인용이 엉뚱한 조항을 가리킴</dt><dd><b>가장 중요한 결함입니다.</b> 근거가 틀리면 답변 자체를 신뢰할 수 없습니다. 소스 문서의 제목·조항 구조를 명확히 하면 개선되며, 검증 시 반드시 인용 정확도를 항목으로 잡아야 합니다.</dd></div><div class="tr"><dt>개정했는데 옛 답변이 계속 나옴</dt><dd>원본 파일을 고쳤어도 노트북 소스는 <b>자동 갱신되지 않는 경우</b>가 있습니다. 소스를 다시 동기화하거나 제거 후 재등록합니다. 운영 시 개정 반영 절차를 규칙으로 두어야 합니다.</dd></div><div class="tr"><dt>공유했는데 팀원이 못 봄</dt><dd>노트북 공유와 <b>소스 문서 권한은 별개</b>입니다. 팀원에게 원본 Drive 문서 열람 권한이 없으면 인용을 클릭해도 열리지 않습니다.</dd></div></dl></div></section>
+
+    <section aria-labelledby="h-links">
+      <h2 id="h-links">관련 링크</h2>
+      <ul class="links"><li><a href="https://notebooklm.google/" target="_blank" rel="noopener noreferrer"><span class="lk">제품 소개</span><span class="lt">Gemini Notebook</span><span class="arr">↗</span></a></li><li><a href="https://support.google.com/gemininotebook/answer/16164461" target="_blank" rel="noopener noreferrer"><span class="lk">도움말</span><span class="lt">Gemini Notebook 알아보기</span><span class="arr">↗</span></a></li></ul>
+    </section>
+
+    <nav class="pager"><a href="mid-29.html">← UC29</a><a href="index.html">목차</a><span class="off">다음 →</span></nav>
+
+    <footer>
+      <span>GWS 검증 시나리오 2 · 중급 UC30 화면 가이드</span>
+      <span class="mono">mid-30</span>
+    </footer>
+  </main>
+</div>
+
+<div class="editor-bar" id="editorBar">
+  <strong>화면 교체</strong>
+  <p>그림 자리를 클릭하거나 PNG를 끌어다 놓으면 실제 캡처로 바뀝니다. 빨간 박스는 끌어서 옮기고 모서리를 잡아 크기를 바꿉니다.</p>
+  <p><b>주석이 없는 원본</b>을 넣으세요. 빨간 박스가 이미 그려진 이미지를 넣으면 두 겹으로 보입니다.</p>
+  <p><span class="count" id="cnt">0 / 3</span> 교체됨</p>
+  <div class="row">
+    <button id="addBox" disabled>+ 박스</button>
+    <button id="undo" disabled>되돌리기</button>
+  </div>
+  <div class="row"><button id="save" class="primary" disabled>HTML 저장</button></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var figures = [].slice.call(document.querySelectorAll('figure[data-shot]'));
+  if (!figures.length) return;
+
+  document.body.classList.add('editor');
+
+  var original = new Map();
+  var replaced = new Set();
+  var activeFig = null;
+
+  var cntEl = document.getElementById('cnt');
+  var saveBtn = document.getElementById('save');
+  var addBtn = document.getElementById('addBox');
+  var undoBtn = document.getElementById('undo');
+
+  var picker = document.createElement('input');
+  picker.type = 'file';
+  picker.accept = 'image/png,image/jpeg,image/webp';
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function pc(v) { return Math.round(v * 100) / 100 + '%'; }
+
+  // ---------- 주석 박스 ----------
+  function addAnnot(box, step, index, preset) {
+    var a = document.createElement('div');
+    a.className = 'annot';
+    var d = preset || { l: 8, t: 14 + index * 22, w: 55, h: 12 };
+    a.style.left = pc(d.l); a.style.top = pc(d.t);
+    a.style.width = pc(d.w); a.style.height = pc(d.h);
+
+    if (index === 0) {
+      var b = document.createElement('span');
+      b.className = 'annot-badge';
+      b.textContent = step;
+      a.appendChild(b);
+    }
+    var handle = document.createElement('span');
+    handle.className = 'annot-handle';
+    handle.setAttribute('data-editor', '');
+    a.appendChild(handle);
+
+    var del = document.createElement('button');
+    del.className = 'annot-del';
+    del.setAttribute('data-editor', '');
+    del.type = 'button';
+    del.textContent = '×';
+    del.title = '이 박스 삭제';
+    del.addEventListener('click', function (e) { e.stopPropagation(); a.remove(); });
+    a.appendChild(del);
+
+    makeInteractive(a, box);
+    box.appendChild(a);
+    return a;
+  }
+
+  function makeInteractive(a, box) {
+    var mode = null, sx = 0, sy = 0, st = null;
+
+    a.addEventListener('pointerdown', function (e) {
+      if (e.target.classList.contains('annot-del')) return;
+      mode = e.target.classList.contains('annot-handle') ? 'resize' : 'move';
+      var r = box.getBoundingClientRect();
+      sx = e.clientX; sy = e.clientY;
+      st = {
+        l: parseFloat(a.style.left), t: parseFloat(a.style.top),
+        w: parseFloat(a.style.width), h: parseFloat(a.style.height),
+        bw: r.width, bh: r.height
+      };
+      a.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+
+    a.addEventListener('pointermove', function (e) {
+      if (!mode) return;
+      var dx = (e.clientX - sx) / st.bw * 100;
+      var dy = (e.clientY - sy) / st.bh * 100;
+      if (mode === 'move') {
+        a.style.left = pc(clamp(st.l + dx, 0, 100 - st.w));
+        a.style.top = pc(clamp(st.t + dy, 0, 100 - st.h));
+      } else {
+        a.style.width = pc(clamp(st.w + dx, 4, 100 - st.l));
+        a.style.height = pc(clamp(st.h + dy, 3, 100 - st.t));
+      }
+    });
+
+    function stop(e) {
+      if (!mode) return;
+      mode = null;
+      try { a.releasePointerCapture(e.pointerId); } catch (_) {}
+    }
+    a.addEventListener('pointerup', stop);
+    a.addEventListener('pointercancel', stop);
+  }
+
+  // ---------- 이미지 적용 ----------
+  function applyImage(fig, dataUrl) {
+    var wrap = fig.querySelector('.fig-wrap');
+    var step = fig.getAttribute('data-step');
+    var n = parseInt(fig.getAttribute('data-annots') || '1', 10);
+
+    wrap.innerHTML = '';
+    var box = document.createElement('div');
+    box.className = 'shot-box';
+    var img = document.createElement('img');
+    // 빌드와 같은 규칙: 원본 폭을 --fig-w 로 알려 그보다 크게 늘어나지 않게 한다.
+    img.onload = function () {
+      box.style.setProperty('--fig-w', img.naturalWidth + 'px');
+    };
+    img.src = dataUrl;
+    img.alt = 'UC01 Step ' + step + ' 화면';
+    box.appendChild(img);
+    wrap.appendChild(box);
+
+    for (var i = 0; i < n; i++) addAnnot(box, step, i);
+
+    var badge = fig.querySelector('.tag-mock');
+    if (badge) badge.textContent = 'CAPTURE';
+
+    replaced.add(fig);
+    setActive(fig);
+    update();
+  }
+
+  function readFile(fig, file) {
+    if (!file || !/^image\//.test(file.type)) return;
+    var fr = new FileReader();
+    fr.onload = function () { applyImage(fig, fr.result); };
+    fr.readAsDataURL(file);
+  }
+
+  function setActive(fig) {
+    activeFig = fig;
+    var s = fig ? fig.getAttribute('data-step') : null;
+    addBtn.disabled = !fig || !replaced.has(fig);
+    undoBtn.disabled = !fig || !replaced.has(fig);
+    addBtn.textContent = s && replaced.has(fig) ? '+ 박스 (Step ' + s + ')' : '+ 박스';
+  }
+
+  function update() {
+    cntEl.textContent = replaced.size + ' / ' + figures.length;
+    saveBtn.disabled = replaced.size === 0;
+  }
+
+  // ---------- 도형 배선 ----------
+  figures.forEach(function (fig) {
+    var wrap = fig.querySelector('.fig-wrap');
+    original.set(fig, wrap.innerHTML);
+
+    wrap.addEventListener('click', function (e) {
+      if (e.target.closest('.annot')) return;
+      setActive(fig);
+      picker.value = '';
+      picker.onchange = function () { readFile(fig, picker.files[0]); };
+      picker.click();
+    });
+
+    ['dragenter', 'dragover'].forEach(function (t) {
+      wrap.addEventListener(t, function (e) {
+        e.preventDefault();
+        wrap.classList.add('dropping');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function (t) {
+      wrap.addEventListener(t, function () { wrap.classList.remove('dropping'); });
+    });
+    wrap.addEventListener('drop', function (e) {
+      e.preventDefault();
+      readFile(fig, e.dataTransfer.files[0]);
+    });
+  });
+
+  addBtn.addEventListener('click', function () {
+    if (!activeFig) return;
+    var box = activeFig.querySelector('.shot-box');
+    if (!box) return;
+    var n = box.querySelectorAll('.annot').length;
+    addAnnot(box, activeFig.getAttribute('data-step'), n);
+  });
+
+  undoBtn.addEventListener('click', function () {
+    if (!activeFig) return;
+    activeFig.querySelector('.fig-wrap').innerHTML = original.get(activeFig);
+    var badge = activeFig.querySelector('.tag-mock');
+    if (badge) badge.textContent = 'MOCKUP';
+    replaced.delete(activeFig);
+    setActive(activeFig);
+    update();
+  });
+
+  // ---------- 내보내기 ----------
+  saveBtn.addEventListener('click', function () {
+    var css = document.getElementById('page-style').textContent;
+    var shell = document.querySelector('.shell').cloneNode(true);
+
+    [].forEach.call(shell.querySelectorAll('[data-editor]'), function (n) { n.remove(); });
+
+    var left = figures.length - replaced.size;
+    var notice = shell.querySelector('.notice');
+    if (notice) {
+      if (left === 0) {
+        notice.innerHTML = '<b>실제 화면 캡처본입니다.</b> 5개 화면 모두 PoC 테넌트에서 촬영한 ' +
+          '실제 Gmail 화면이며, 빨간 박스 안의 번호는 해당 Step 번호에 대응합니다.';
+      } else {
+        notice.innerHTML = '<b>일부만 실제 캡처입니다.</b> 5개 중 ' + replaced.size +
+          '개는 실제 화면, 나머지 ' + left + '개는 <b>목업</b>입니다. ' +
+          '남은 목업을 교체한 뒤 배포하세요.';
+      }
+    }
+
+    var doc = '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+      '<title>' + document.title + '</title>\n<style>\n' +
+      'html,body{margin:0;padding:0}img{max-width:100%}\n' + css +
+      '\n</style>\n</head>\n<body>\n' + shell.outerHTML + '\n</body>\n</html>\n';
+
+    var blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'mid-01-final.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+  });
+
+  window.addEventListener('beforeunload', function (e) {
+    if (replaced.size) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  update();
+})();
+</script>

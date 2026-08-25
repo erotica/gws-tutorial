@@ -1,0 +1,959 @@
+<title>초급 UC05 · Google Slides 발표 자료 작성 및 공유 — 화면 가이드</title>
+<style id="page-style">
+  :root {
+    --ground:      #F4F6F9;
+    --surface:     #FFFFFF;
+    --surface-2:   #EDF0F5;
+    --ink:         #161A22;
+    --ink-2:       #545C6E;
+    --ink-3:       #8992A4;
+    --line:        #DDE2EA;
+    --line-2:      #C8CFDA;
+    --accent:      #1A56A8;
+    --accent-2:    #2C6FC4;
+    --accent-soft: #E6EDF8;
+    --ok:          #1B7A4B;
+    --ok-soft:     #E3F3EA;
+    --warn:        #9A5B0C;
+    --warn-soft:   #FBEFDC;
+    --annot:       #D93A40;
+
+    --mk-chrome:  #F0F2F6;
+    --mk-panel:   #FFFFFF;
+    --mk-field:   #F5F7FA;
+    --mk-line:    #D9DFE8;
+    --mk-ink:     #22272F;
+    --mk-ink2:    #6B7385;
+    --mk-blue:    #1A73E8;
+
+    --sans: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo",
+            "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "D2Coding", ui-monospace, "Cascadia Mono", Consolas,
+            "Courier New", monospace;
+
+    --maxw: 46rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #101319;
+      --surface:     #171B23;
+      --surface-2:   #1E232D;
+      --ink:         #E6E9EF;
+      --ink-2:       #9AA3B4;
+      --ink-3:       #6C7486;
+      --line:        #272D38;
+      --line-2:      #333B48;
+      --accent:      #74A6EA;
+      --accent-2:    #5B90DA;
+      --accent-soft: #1A2434;
+      --ok:          #55C08A;
+      --ok-soft:     #12261C;
+      --warn:        #D69A4B;
+      --warn-soft:   #2A2013;
+      --annot:       #F0656A;
+
+      --mk-chrome:  #1C212B;
+      --mk-panel:   #141821;
+      --mk-field:   #1F2530;
+      --mk-line:    #2E3644;
+      --mk-ink:     #D8DDE6;
+      --mk-ink2:    #8C95A6;
+      --mk-blue:    #6BA5F0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:      #101319;
+    --surface:     #171B23;
+    --surface-2:   #1E232D;
+    --ink:         #E6E9EF;
+    --ink-2:       #9AA3B4;
+    --ink-3:       #6C7486;
+    --line:        #272D38;
+    --line-2:      #333B48;
+    --accent:      #74A6EA;
+    --accent-2:    #5B90DA;
+    --accent-soft: #1A2434;
+    --ok:          #55C08A;
+    --ok-soft:     #12261C;
+    --warn:        #D69A4B;
+    --warn-soft:   #2A2013;
+    --annot:       #F0656A;
+
+    --mk-chrome:  #1C212B;
+    --mk-panel:   #141821;
+    --mk-field:   #1F2530;
+    --mk-line:    #2E3644;
+    --mk-ink:     #D8DDE6;
+    --mk-ink2:    #8C95A6;
+    --mk-blue:    #6BA5F0;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+  }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* ---------- shell ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0 1.25rem 6rem;
+  }
+  @media (min-width: 1100px) {
+    .shell { grid-template-columns: 5rem minmax(0, 1fr); gap: 2.5rem; padding-left: 2rem; }
+  }
+
+  /* ---------- step rail ---------- */
+  .rail { display: none; }
+  @media (min-width: 1100px) {
+    .rail {
+      display: block;
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+      padding-top: 15rem;
+    }
+    .rail-title {
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: .75rem;
+      font-weight: 600;
+    }
+    .rail ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .1rem; }
+    .rail a {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink-3);
+      text-decoration: none;
+      padding: .2rem .35rem;
+      border-left: 2px solid var(--line);
+      transition: color .15s, border-color .15s;
+    }
+    .rail a:hover { color: var(--accent); border-left-color: var(--accent); }
+    .rail li.shot a { color: var(--ink-2); border-left-color: var(--line-2); font-weight: 600; }
+    .rail .cam { width: 11px; height: 11px; flex: none; color: var(--accent); }
+    .rail li:not(.shot) .cam { visibility: hidden; }
+  }
+
+  main { min-width: 0; }
+
+  /* ---------- masthead ---------- */
+  .masthead { padding: 3.5rem 0 0; }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+  }
+  .eyebrow .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--line-2); }
+  .uc-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: .15rem .5rem;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: clamp(1.55rem, 1.1rem + 1.7vw, 2.1rem);
+    line-height: 1.32;
+    letter-spacing: -.015em;
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+    text-wrap: balance;
+  }
+  .lede {
+    font-size: 1rem;
+    color: var(--ink-2);
+    margin: 0 0 2rem;
+    max-width: 40rem;
+  }
+
+  /* ---------- meta ---------- */
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+  .meta div { background: var(--surface); padding: .8rem .9rem; }
+  .meta dt {
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: .2rem;
+  }
+  .meta dd { margin: 0; font-size: 13.5px; font-weight: 600; line-height: 1.5; }
+  .meta dd .sub { font-weight: 400; color: var(--ink-2); font-size: 12px; }
+  .dots { display: inline-flex; gap: 3px; vertical-align: middle; margin-left: .35rem; }
+  .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line-2); display: block; }
+  .dots i.on { background: var(--accent); }
+
+  /* ---------- notice ---------- */
+  .notice {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--warn);
+    background: var(--warn-soft);
+    border-radius: 4px;
+    padding: .9rem 1.1rem;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 3rem;
+  }
+  .notice b { color: var(--warn); }
+
+  /* ---------- sections ---------- */
+  section { margin-bottom: 3.5rem; }
+  h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin: 0 0 .35rem;
+    padding-bottom: .6rem;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    gap: .6rem;
+  }
+  h2 .h2-note {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-3);
+    letter-spacing: 0;
+    margin-left: auto;
+  }
+  section > p:first-of-type { margin-top: 1.1rem; }
+  p { margin: 0 0 1rem; }
+
+  .prep { list-style: none; margin: 1.1rem 0 0; padding: 0; display: grid; gap: .55rem; }
+  .prep li {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: .8rem;
+    font-size: 14px;
+    align-items: baseline;
+  }
+  .prep .k {
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+  }
+  code {
+    font-family: var(--mono);
+    font-size: .86em;
+    background: var(--surface-2);
+    padding: .1em .38em;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  /* ---------- key path ---------- */
+  .keypath {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: .6rem;
+    margin-top: 1.2rem;
+  }
+  .kp {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: .65rem .7rem .7rem;
+    transition: border-color .15s, transform .15s;
+  }
+  .kp:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .kp svg { display: block; width: 100%; height: auto; margin-bottom: .5rem; border-radius: 3px; }
+  .kp .n {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--accent);
+    display: block;
+  }
+  .kp .t { font-size: 12.5px; font-weight: 600; line-height: 1.45; display: block; }
+
+  /* ---------- steps ---------- */
+  .steps { margin-top: 1.6rem; display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: grid;
+    grid-template-columns: 3.1rem minmax(0, 1fr);
+    gap: 0 1rem;
+    padding: 1.4rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .step:first-child { border-top: none; padding-top: .4rem; }
+  .step-n {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-3);
+    line-height: 1.7;
+    letter-spacing: .02em;
+  }
+  .step.shot .step-n { color: var(--accent); }
+  .step-n .cam { display: block; width: 13px; height: 13px; margin-top: .3rem; color: var(--accent); }
+  .step-b { min-width: 0; }
+  .step-b > p { margin: 0; font-size: 14.5px; }
+  .step-b > p + p { margin-top: .5rem; }
+
+  .check {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .5rem;
+    align-items: start;
+    margin-top: .7rem;
+    padding: .5rem .7rem;
+    background: var(--ok-soft);
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .check .ck { color: var(--ok); flex: none; width: 14px; height: 14px; margin-top: .28rem; }
+  .check b { color: var(--ok); font-weight: 600; }
+
+  /* ---------- figure / mockup ---------- */
+  figure {
+    margin: .9rem 0 0;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .fig-bar {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .7rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+    font-size: 11px;
+    color: var(--ink-2);
+    flex-wrap: wrap;
+  }
+  .tag-mock {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: var(--warn);
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    padding: 0 .3em;
+    flex: none;
+  }
+  .fig-file { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); margin-left: auto; }
+  .fig-wrap { overflow-x: auto; padding: .9rem; background: var(--surface-2); }
+  .fig-wrap svg { display: block; width: 100%; min-width: 30rem; height: auto; }
+  .fig-wrap img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 3px;
+    border: 1px solid var(--line);
+  }
+  figcaption {
+    padding: .55rem .8rem;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  /* mockup internals */
+  svg.mock { font-family: var(--sans); }
+  svg.mock .w   { fill: var(--mk-panel); stroke: var(--mk-line); }
+  svg.mock .ch  { fill: var(--mk-chrome); }
+  svg.mock .fd  { fill: var(--mk-field); stroke: var(--mk-line); }
+  svg.mock .ln  { stroke: var(--mk-line); stroke-width: 1; }
+  svg.mock .t1  { fill: var(--mk-ink); font-size: 12px; }
+  svg.mock .t2  { fill: var(--mk-ink2); font-size: 11px; }
+  svg.mock .tb  { fill: var(--mk-ink); font-size: 12px; font-weight: 700; }
+  svg.mock .bl  { fill: var(--mk-blue); }
+  svg.mock .blt { fill: var(--mk-blue); font-size: 11px; }
+  svg.mock .mono{ font-family: var(--mono); font-size: 10.5px; fill: var(--mk-ink); }
+  svg.mock .an  { fill: none; stroke: var(--annot); stroke-width: 2; }
+  svg.mock .ab  { fill: var(--annot); }
+  svg.mock .abt { fill: #fff; font-size: 11px; font-weight: 700; text-anchor: middle; font-family: var(--mono); }
+
+  /* ---------- record form pointer ---------- */
+  .record-ref {
+    margin-top: 1.2rem;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    background: var(--surface);
+    padding: 1.1rem 1.2rem;
+  }
+  .rr-lead { margin: 0 0 1rem; font-size: 14px; }
+  .rr-meta {
+    margin: 0 0 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: .75rem 1.5rem;
+  }
+  .rr-meta div { min-width: 0; }
+  .rr-meta dt {
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: .15rem;
+  }
+  .rr-meta dd { margin: 0; font-size: 13.5px; line-height: 1.6; }
+  .rr-note { margin: 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.7; }
+
+  /* ---------- trouble ---------- */
+  .trouble { margin-top: 1.2rem; display: flex; flex-direction: column; gap: .1rem; }
+  .tr {
+    border-top: 1px solid var(--line);
+    padding: .9rem 0;
+    display: grid;
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    gap: .3rem 1.2rem;
+  }
+  .tr:first-child { border-top: none; }
+  .tr dt { font-size: 13.5px; font-weight: 600; line-height: 1.6; }
+  .tr dd { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.7; }
+  @media (max-width: 40rem) { .tr { grid-template-columns: 1fr; } }
+
+  /* ---------- links ---------- */
+  .links { list-style: none; margin: 1.2rem 0 0; padding: 0; display: flex; flex-direction: column; gap: .1rem; }
+  .links li { border-top: 1px solid var(--line); }
+  .links li:first-child { border-top: none; }
+  .links a {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr auto;
+    gap: .9rem;
+    align-items: baseline;
+    padding: .7rem .2rem;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .links a:hover .lt { color: var(--accent); text-decoration: underline; }
+  .links .lk {
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+  .links .arr { color: var(--ink-3); font-size: 12px; }
+
+  /* ---------- review box ---------- */
+  .review {
+    border: 1px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 7px;
+    padding: 1.2rem 1.3rem;
+  }
+  .review h3 { margin: 0 0 .2rem; font-size: 14px; font-weight: 700; color: var(--accent); }
+  .review p { font-size: 13px; color: var(--ink-2); margin: 0 0 .8rem; }
+  .review ol { margin: 0; padding-left: 1.2rem; font-size: 13.5px; line-height: 1.85; }
+  .review ol li::marker { color: var(--accent); font-weight: 700; }
+
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-3);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  footer .mono { font-family: var(--mono); }
+
+  /* ---------- 캡처 교체 · 주석 배치 ---------- */
+  .shot-box { position: relative; line-height: 0; }
+  .shot-box img { display: block; width: 100%; height: auto; border-radius: 3px; border: 1px solid var(--line); }
+
+  .annot {
+    position: absolute;
+    border: 3px solid var(--annot);
+    border-radius: 6px;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  .annot-badge {
+    position: absolute;
+    left: 0; top: 0;
+    transform: translate(-50%, -50%);
+    width: 1.9rem; height: 1.9rem;
+    border-radius: 50%;
+    background: var(--annot);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: .78rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+  }
+  .annot-handle, .annot-del { display: none; }
+
+  body.editor .fig-wrap { cursor: pointer; }
+  body.editor .fig-wrap.dropping {
+    outline: 2px dashed var(--accent);
+    outline-offset: -6px;
+    background: var(--accent-soft);
+  }
+  body.editor .annot { pointer-events: auto; cursor: move; }
+  body.editor .annot-handle {
+    display: block; position: absolute; right: -8px; bottom: -8px;
+    width: 15px; height: 15px; border-radius: 3px;
+    background: var(--surface); border: 2px solid var(--annot);
+    cursor: nwse-resize;
+  }
+  body.editor .annot-del {
+    display: grid; position: absolute; right: -10px; top: -10px;
+    width: 19px; height: 19px; border-radius: 50%; padding: 0;
+    background: var(--ink); color: var(--surface);
+    font-size: 12px; line-height: 1; place-items: center;
+    cursor: pointer; border: none;
+  }
+  .fig-hint { font-size: 11px; color: var(--ink-3); }
+
+  .editor-bar {
+    position: fixed; right: 1rem; bottom: 1rem; z-index: 50;
+    background: var(--surface); border: 1px solid var(--line-2);
+    border-radius: 8px; box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
+    padding: .75rem .85rem; display: flex; flex-direction: column; gap: .5rem;
+    max-width: 15.5rem; font-size: 12px;
+  }
+  .editor-bar strong { font-size: 12px; display: block; }
+  .editor-bar p { margin: 0; color: var(--ink-2); font-size: 11px; line-height: 1.6; }
+  .editor-bar .row { display: flex; gap: .4rem; }
+  .editor-bar button {
+    font: inherit; font-weight: 600; cursor: pointer; flex: 1;
+    border-radius: 5px; padding: .4rem .5rem;
+    border: 1px solid var(--line-2); background: var(--surface-2); color: var(--ink);
+  }
+  .editor-bar button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .editor-bar button:disabled { opacity: .45; cursor: not-allowed; }
+  .editor-bar .count { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--accent); }
+
+  @media print {
+    .rail, .review, .keypath, .editor-bar { display: none; }
+    body { background: #fff; font-size: 11pt; }
+    .step { break-inside: avoid; }
+    figure { break-inside: avoid; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  /* 실제 캡처: 상자를 이미지에 맞추고 가운데 정렬한다.
+     열 폭보다 큰 캡처는 줄이되, 원본보다 크게 늘리지는 않는다.
+     (예전에는 목업 viewBox 비율로 높이를 강제해 세로 비율 캡처가 확대됐다) */
+  .fig-wrap .shot-box {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;          /* 목업 SVG 의 가로 스크롤을 건드리지 않고 가운데 정렬 */
+    background: var(--surface); border-radius: 3px;
+  }
+  .fig-wrap .shot-box img {
+    width: auto;
+    height: auto;
+    max-width: min(100%, var(--fig-w, 100%));
+    border: 1px solid var(--line); border-radius: 3px;
+  }
+  .step-more {
+    margin-top: .5rem !important;
+    padding-left: .7rem;
+    border-left: 2px solid var(--line-2);
+    color: var(--ink-2);
+    font-size: 13.5px !important;
+  }
+  .step-more b { color: var(--ink); }
+  /* 섹션 접기 — 스크립트 없이 CSS 만으로 동작해야 내보낸 HTML 에서도 살아 있다.
+     체크박스를 섹션 안에 두어 형제 선택자만으로 그 섹션의 본문을 여닫는다.
+     본문을 .sec-body 로 감싸므로 .prep(grid)·.trouble(flex) 의 display 를 건드리지 않는다. */
+  .sec-cb {
+    position: absolute; width: 1px; height: 1px; margin: -1px;
+    padding: 0; border: 0; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+  .sec-cb ~ .sec-body { display: none; }
+  .sec-cb:checked ~ .sec-body { display: block; }
+  .sec-tog {
+    margin-left: auto; font-size: 11px; font-weight: 500; letter-spacing: 0;
+    color: var(--ink-3); cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+  }
+  .sec-tog:hover { color: var(--accent); }
+  .sec-tog .t-close { display: none; }
+  .sec-cb:checked ~ h2 .sec-tog .t-open { display: none; }
+  .sec-cb:checked ~ h2 .sec-tog .t-close { display: inline; }
+  .sec-cb:focus-visible ~ h2 .sec-tog { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media print {
+    /* 인쇄본에는 토글이 없다. 접힌 채로 뽑히지 않도록 항상 펼친다. */
+    .sec-cb ~ .sec-body { display: block !important; }
+    .sec-tog { display: none; }
+  }
+
+  /* 확인 방법 — 단계 목록과 같은 격자를 쓰되 번호 자리에 체크 표시를 둔다. */
+  .steps.verify { margin-top: 1.4rem; }
+  .vstep .step-n { color: var(--ok); }
+  .vstep .step-n .ck { display: block; width: 15px; height: 15px; }
+  .vstep .step-b > p { font-weight: 500; }
+  .vstep.vtail { padding-top: .2rem; border-top: none; }
+  .vstep.vtail .step-b > .step-more { margin-top: 0 !important; }
+  .kp .n { font-variant-numeric: tabular-nums; }
+  .pager {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; margin-top: 3rem; padding-top: 1.2rem;
+    border-top: 1px solid var(--line); font-size: 13px;
+  }
+  .pager a { text-decoration: none; font-weight: 600; }
+  .pager a:hover { text-decoration: underline; }
+  .pager .off { color: var(--ink-3); }
+</style>
+
+<div class="shell">
+  <nav class="rail" aria-label="단계 바로가기">
+    <div class="rail-title">Steps</div>
+    <ol><li class=""><a href="#step-1"><span>01</span></a></li><li class="shot"><a href="#step-2"><span>02</span></a></li><li class=""><a href="#step-3"><span>03</span></a></li><li class=""><a href="#step-4"><span>04</span></a></li><li class=""><a href="#step-5"><span>05</span></a></li><li class="shot"><a href="#step-6"><span>06</span></a></li><li class=""><a href="#step-7"><span>07</span></a></li><li class=""><a href="#step-8"><span>08</span></a></li><li class="shot"><a href="#step-9"><span>09</span></a></li><li class="shot vrail"><a href="#verify"><span>확인</span></a></li></ol>
+  </nav>
+
+  <main>
+    <header class="masthead">
+      <p class="eyebrow"><span>GWS 검증 시나리오 2</span><span class="sep"></span>
+        <span>초급</span><span class="sep"></span>
+        <span class="uc-id">BAS-05</span></p>
+      <h1>Google Slides 발표 자료 작성 및 공유</h1>
+      <p class="lede">Google Slides 기반의 슬라이드 디자인, 개체/시트 연동 배치, 시각 효과 구성 및 발표자 도구 활용법 습득</p>
+      <dl class="meta">
+        <div><dt>대상 서비스</dt><dd>Google Slides</dd></div>
+        <div><dt>필요 에디션</dt><dd>제한 없음
+          <span class="sub">전 에디션</span></dd></div>
+        <div><dt>예상 소요</dt><dd>30분</dd></div>
+        <div><dt>난이도</dt><dd>하
+          <span class="dots" role="img" aria-label="3단계 중 1단계"><i class="on"></i><i></i><i></i></span></dd></div>
+      </dl>
+    </header>
+
+    <section aria-labelledby="h-prep"><input type="checkbox" id="prep-open" class="sec-cb" aria-label="사전 준비 펼치기"><h2 id="h-prep">사전 준비<label class="sec-tog" for="prep-open"><span class="t-open">펼치기</span><span class="t-close">접기</span></label></h2><div class="sec-body"><ul class="prep"><li><span class="k">계정</span><span>본인 계정 1개 + 댓글 피드백 확인용 동료 계정 1개</span></li><li><span class="k">샘플 데이터</span><span>슬라이드에 넣을 이미지 1~2개, Sheets 표 1개 (붙여넣기 확인용)</span></li><li><span class="k">환경</span><span>발표자 보기를 확인하려면 <b>모니터가 2개이면 좋지만</b> 1개로도 확인 가능합니다</span></li><li><span class="k">주의</span><span>PowerPoint 로 내보낼 때 <b>글꼴이 없으면 대체됩니다.</b> 서식 확인은 Step 10 에서 반드시 하세요</span></li></ul></div></section>
+
+    <section aria-labelledby="h-steps">
+      <h2 id="h-steps">단계별 수행 <span class="h2-note">전체 9단계</span></h2>
+      <div class="steps"><article class="step" id="step-1"><div class="step-n">01</div><div class="step-b"><p>Google Drive에서 [새로 만들기 &gt; Google 프레젠테이션]을 선택합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 새 프레젠테이션이 열리고 첫 슬라이드가 표지 레이아웃입니다.</span></div></div></article><article class="step shot" id="step-2"><div class="step-n">02</div><div class="step-b"><p>슬라이드 테마를 일괄 적용합니다.</p><p class="step-more">테마를 먼저 고르면 이후에 만드는 슬라이드가 전부 그 디자인을 따릅니다. 나중에 바꿔도 되지만 개별 지정한 색이 남습니다.</p><figure data-shot="step-02" data-step="2" data-annots="1"><div class="fig-bar"><span class="tag-mock">MOCKUP</span><span class="fig-hint" data-editor>클릭 또는 이미지 드롭</span><span>우측 테마 패널 — 전체 디자인 일괄 적용</span><span class="fig-file">bas-05/step-02.png</span></div><div class="fig-wrap"><svg class="mock" viewBox="0 0 760 320" role="img" aria-label="UC05 Step 2 — 우측 테마 패널 — 전체 디자인 일괄 적용"><rect class="w" x="0.5" y="0.5" width="759" height="319" rx="8"/><path class="ch" d="M1 9a8 8 0 018-8h742a8 8 0 018 8v35H1z"/><text class="tb" x="24" y="29" font-size="14">8월 영업 실적 발표</text><text class="t2" x="736" y="29" text-anchor="end">Google Slides</text><line class="ln" x1="1" y1="44" x2="759" y2="44"/><path class="ch" d="M1 44h439v241a8 8 0 01-8 8H9a8 8 0 01-8-8z"/><line class="ln" x1="440" y1="44" x2="440" y2="294"/><text class="tb" x="456" y="70" font-size="11">슬라이드 1</text><text class="t2" x="456" y="90" font-size="10">표지</text><line class="ln" x1="456" y1="104" x2="444" y2="104"/><text class="tb" x="456" y="133" font-size="11">8월 영업 실적 발표</text><text class="t2" x="456" y="151" font-size="10.5">영업본부 · 2026-08-11</text><line class="ln" x1="456" y1="162" x2="444" y2="162"/><line class="ln" x1="460" y1="44" x2="460" y2="294"/><text class="t2" x="478" y="70" font-size="10" font-weight="700">테마</text><text class="t1" x="478" y="92" font-size="10.5">Simple Light</text><text class="t1" x="478" y="112" font-size="10.5">Focus</text><text class="t1" x="478" y="132" font-size="10.5">Shift</text><text class="t1" x="478" y="152" font-size="10.5">Momentum</text><line class="ln" x1="478" y1="178" x2="740" y2="178"/><text class="t2" x="478" y="196" font-size="10" font-weight="700">적용 범위</text><text class="t1" x="478" y="218" font-size="10.5">전체 슬라이드</text><line class="ln" x1="478" y1="244" x2="740" y2="244"/><rect class="an" x="460" y="48" width="288" height="226" rx="6"/><circle class="ab" cx="460" cy="48" r="13"/><text class="abt" x="460" y="52">2</text></svg></div><figcaption><b>슬라이드를 하나씩 꾸미지 마세요.</b> 테마를 고르면 전체가 한 번에 정돈됩니다. 디자인에 자신이 없어도 통일감 있는 자료가 됩니다.</figcaption></figure><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 우측 테마 패널에서 고른 디자인이 <b>전체 슬라이드에 한 번에</b> 적용됩니다.</span></div></div></article><article class="step" id="step-3"><div class="step-n">03</div><div class="step-b"><p>새 슬라이드를 추가하고 레이아웃을 지정합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 새 슬라이드 추가 시 레이아웃 목록이 나타나고, 고른 틀대로 자리표시자가 배치됩니다.</span></div></div></article><article class="step" id="step-4"><div class="step-n">04</div><div class="step-b"><p>텍스트 상자, 이미지, 도형을 배치합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 텍스트·이미지·도형이 삽입되고 자유롭게 이동됩니다.</span></div></div></article><article class="step" id="step-5"><div class="step-n">05</div><div class="step-b"><p>Sheets 표를 복사하여 연동으로 붙여넣습니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> Sheets 표를 붙여넣으면 연결 여부를 묻는 창이 뜹니다.</span></div></div></article><article class="step shot" id="step-6"><div class="step-n">06</div><div class="step-b"><p>전환 효과 및 개체 애니메이션을 추가합니다.</p><p class="step-more">전환은 슬라이드가 바뀔 때, 애니메이션은 개체가 나타날 때 적용됩니다. 둘은 다른 메뉴입니다.</p><figure data-shot="step-06" data-step="6" data-annots="1"><div class="fig-bar"><span class="tag-mock">MOCKUP</span><span class="fig-hint" data-editor>클릭 또는 이미지 드롭</span><span>슬라이드 전환과 개체 애니메이션</span><span class="fig-file">bas-05/step-06.png</span></div><div class="fig-wrap"><svg class="mock" viewBox="0 0 760 274" role="img" aria-label="UC05 Step 6 — 슬라이드 전환과 개체 애니메이션"><rect class="w" x="0.5" y="0.5" width="759" height="273" rx="8"/><path class="ch" d="M1 9a8 8 0 018-8h742a8 8 0 018 8v35H1z"/><text class="tb" x="24" y="29" font-size="14">전환</text><text class="t2" x="736" y="29" text-anchor="end">슬라이드 3</text><line class="ln" x1="1" y1="44" x2="759" y2="44"/><text class="tb" x="24" y="66" font-size="13">슬라이드 전환</text><text class="t2" x="24" y="105">효과</text><rect x="114" y="86" width="200" height="28" rx="4" class="fd" /><text class="t1" x="124" y="105" font-size="11">디졸브</text><path d="M294 98l4 4 4-4" fill="none" stroke="var(--mk-ink2)" stroke-width="1.4" stroke-linecap="round"/><text class="t2" x="24" y="141">속도</text><rect x="114" y="122" width="200" height="28" rx="4" class="fd" /><text class="t1" x="124" y="141" font-size="11">보통</text><path d="M294 134l4 4 4-4" fill="none" stroke="var(--mk-ink2)" stroke-width="1.4" stroke-linecap="round"/><text class="tb" x="24" y="180" font-size="13">개체 애니메이션</text><text class="t1" x="24" y="208" font-size="11">제목 텍스트</text><text class="t2" x="420" y="208">페이드 인 · 클릭 시</text><line class="ln" x1="24" y1="218" x2="736" y2="218"/><text class="t1" x="24" y="238" font-size="11">차트 이미지</text><text class="t2" x="420" y="238">나타내기 · 이전 다음에</text><line class="ln" x1="24" y1="248" x2="736" y2="248"/><rect class="an" x="8" y="180" width="744" height="76" rx="6"/><circle class="ab" cx="8" cy="180" r="13"/><text class="abt" x="8" y="184">6</text></svg></div><figcaption><b>둘은 다른 것입니다.</b> 전환은 슬라이드가 넘어갈 때, 애니메이션은 그 안의 개체가 나타날 때 동작합니다. 같은 패널에 있어 헷갈리기 쉽습니다.</figcaption></figure><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 전환 효과는 슬라이드 넘길 때, 애니메이션은 개체가 나타날 때 동작합니다.</span></div></div></article><article class="step" id="step-7"><div class="step-n">07</div><div class="step-b"><p>발표자 노트에 대본을 작성합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 발표자 노트가 슬라이드 하단에 입력되고 저장됩니다.</span></div></div></article><article class="step" id="step-8"><div class="step-n">08</div><div class="step-b"><p>동료에게 공유하고 슬라이드별 댓글을 작성합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 동료가 슬라이드별로 댓글을 달 수 있습니다.</span></div></div></article><article class="step shot" id="step-9"><div class="step-n">09</div><div class="step-b"><p>슬라이드쇼를 실행하고 발표자 보기를 활용합니다.</p><p class="step-more">발표자 보기는 <b>슬라이드쇼 옆 화살표</b>를 눌러야 나옵니다. 슬라이드쇼 버튼만 누르면 전체화면만 됩니다.</p><figure data-shot="step-09" data-step="9" data-annots="1"><div class="fig-bar"><span class="tag-mock">MOCKUP</span><span class="fig-hint" data-editor>클릭 또는 이미지 드롭</span><span>슬라이드쇼 옆 화살표 › 발표자 보기</span><span class="fig-file">bas-05/step-09.png</span></div><div class="fig-wrap"><svg class="mock" viewBox="0 0 760 320" role="img" aria-label="UC05 Step 9 — 슬라이드쇼 옆 화살표 › 발표자 보기"><rect class="w" x="0.5" y="0.5" width="759" height="319" rx="8"/><path class="ch" d="M1 9a8 8 0 018-8h742a8 8 0 018 8v35H1z"/><text class="tb" x="24" y="29" font-size="14">발표자 보기</text><text class="t2" x="736" y="29" text-anchor="end">경과 12:34</text><line class="ln" x1="1" y1="44" x2="759" y2="44"/><path class="ch" d="M1 44h379v241a8 8 0 01-8 8H9a8 8 0 01-8-8z"/><line class="ln" x1="380" y1="44" x2="380" y2="294"/><text class="tb" x="396" y="70" font-size="11">현재 슬라이드 (3 / 12)</text><text class="t2" x="396" y="90" font-size="10">8월 항목별 판매액</text><line class="ln" x1="396" y1="104" x2="384" y2="104"/><text class="tb" x="396" y="133" font-size="11">다음 슬라이드</text><text class="t2" x="396" y="151" font-size="10.5">4. 주요 거래처 현황</text><line class="ln" x1="396" y1="162" x2="384" y2="162"/><line class="ln" x1="400" y1="44" x2="400" y2="294"/><text class="t2" x="418" y="70" font-size="10" font-weight="700">발표자 노트</text><text class="mono" x="500" y="70" font-size="9" fill="var(--mk-ink2)">슬라이드 3</text><text class="t1" x="418" y="92" font-size="10.5">모니터가 전체의 42% 차지</text><text class="t1" x="418" y="112" font-size="10.5">전년 대비 12% 증가 강조</text><text class="t1" x="418" y="132" font-size="10.5">질문 예상: 재고 확보 계획</text><line class="ln" x1="418" y1="158" x2="740" y2="158"/><text class="t2" x="418" y="176" font-size="10" font-weight="700">타이머</text><text class="t1" x="418" y="198" font-size="10.5">경과 12:34</text><line class="ln" x1="418" y1="224" x2="740" y2="224"/><rect class="an" x="400" y="48" width="348" height="226" rx="6"/><circle class="ab" cx="400" cy="48" r="13"/><text class="abt" x="400" y="52">9</text></svg></div><figcaption><b>슬라이드쇼 버튼만 누르면 안 나옵니다.</b> 옆의 작은 화살표를 눌러야 발표자 보기가 열립니다. 노트와 타이머가 함께 보여 발표 중에 유용합니다.</figcaption></figure><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 발표자 보기에 <b>노트와 경과 시간 타이머</b>가 함께 표시됩니다.</span></div></div></article></div>
+    </section>
+
+    <section aria-labelledby="h-verify"><h2 id="h-verify">확인 방법 <span class="h2-note">최종 결과 1개</span></h2><div class="steps verify"><article class="step vstep" id="verify"><div class="step-n"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-b"><p>PowerPoint(.pptx)와 PDF로 내보낸 파일에서 글꼴과 이미지 배치 등 서식이 그대로 유지됩니다.</p></div></article></div></section>
+
+    <section aria-labelledby="h-tr"><input type="checkbox" id="trouble-open" class="sec-cb" aria-label="자주 겪는 오류 펼치기"><h2 id="h-tr">자주 겪는 오류<label class="sec-tog" for="trouble-open"><span class="t-open">펼치기</span><span class="t-close">접기</span></label></h2><div class="sec-body"><dl class="trouble"><div class="tr"><dt>발표자 보기가 안 나옴</dt><dd>슬라이드쇼 버튼이 아니라 <b>옆의 아래 화살표</b>를 눌러야 합니다. 버튼만 누르면 일반 전체화면으로 시작됩니다.</dd></div><div class="tr"><dt>pptx 로 내보내니 글꼴이 바뀜</dt><dd>상대 PC 에 해당 글꼴이 없으면 대체됩니다. Google 전용 글꼴은 특히 그렇습니다. 배포용은 <b>PDF</b> 로 하거나, 맑은 고딕처럼 널리 설치된 글꼴을 쓰세요.</dd></div><div class="tr"><dt>테마를 바꿨는데 일부 슬라이드가 그대로</dt><dd>그 슬라이드에서 색이나 글꼴을 <b>직접 지정</b>했기 때문입니다. 개별 지정이 테마보다 우선합니다. 서식 지우기로 되돌리면 테마가 적용됩니다.</dd></div><div class="tr"><dt>애니메이션이 발표 중에 동작 안 함</dt><dd>&#x27;클릭 시&#x27; 로 설정된 애니메이션은 클릭해야 나타납니다. 자동 재생을 원하면 <b>&#x27;이전 다음에&#x27;</b> 로 바꾸세요.</dd></div><div class="tr"><dt>Sheets 표를 붙여넣었는데 원본이 바뀌어도 그대로</dt><dd>붙여넣기 시 &#x27;연결&#x27; 대신 &#x27;연결 해제&#x27;를 고른 경우입니다. 연결하려면 붙여넣을 때 <b>스프레드시트에 연결</b>을 선택해야 합니다.</dd></div><div class="tr"><dt>이미지가 흐릿하게 보임</dt><dd>작은 이미지를 크게 늘린 경우입니다. 원본 해상도가 낮으면 확대할수록 깨집니다. 큰 이미지를 넣고 줄이는 편이 낫습니다.</dd></div></dl></div></section>
+
+    <section aria-labelledby="h-links">
+      <h2 id="h-links">관련 링크</h2>
+      <ul class="links"><li><a href="https://workspace.google.com/products/slides/" target="_blank" rel="noopener noreferrer"><span class="lk">제품 소개</span><span class="lt">Google Slides</span><span class="arr">↗</span></a></li><li><a href="https://support.google.com/docs/answer/2763168" target="_blank" rel="noopener noreferrer"><span class="lk">도움말</span><span class="lt">Google Slides 사용 방법</span><span class="arr">↗</span></a></li></ul>
+    </section>
+
+    <nav class="pager"><a href="bas-04.html">← UC04</a><a href="index.html">목차</a><a href="bas-06.html">UC06 →</a></nav>
+
+    <footer>
+      <span>GWS 검증 시나리오 2 · 초급 UC05 화면 가이드</span>
+      <span class="mono">bas-05</span>
+    </footer>
+  </main>
+</div>
+
+<div class="editor-bar" id="editorBar">
+  <strong>화면 교체</strong>
+  <p>그림 자리를 클릭하거나 PNG를 끌어다 놓으면 실제 캡처로 바뀝니다. 빨간 박스는 끌어서 옮기고 모서리를 잡아 크기를 바꿉니다.</p>
+  <p><b>주석이 없는 원본</b>을 넣으세요. 빨간 박스가 이미 그려진 이미지를 넣으면 두 겹으로 보입니다.</p>
+  <p><span class="count" id="cnt">0 / 3</span> 교체됨</p>
+  <div class="row">
+    <button id="addBox" disabled>+ 박스</button>
+    <button id="undo" disabled>되돌리기</button>
+  </div>
+  <div class="row"><button id="save" class="primary" disabled>HTML 저장</button></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var figures = [].slice.call(document.querySelectorAll('figure[data-shot]'));
+  if (!figures.length) return;
+
+  document.body.classList.add('editor');
+
+  var original = new Map();
+  var replaced = new Set();
+  var activeFig = null;
+
+  var cntEl = document.getElementById('cnt');
+  var saveBtn = document.getElementById('save');
+  var addBtn = document.getElementById('addBox');
+  var undoBtn = document.getElementById('undo');
+
+  var picker = document.createElement('input');
+  picker.type = 'file';
+  picker.accept = 'image/png,image/jpeg,image/webp';
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function pc(v) { return Math.round(v * 100) / 100 + '%'; }
+
+  // ---------- 주석 박스 ----------
+  function addAnnot(box, step, index, preset) {
+    var a = document.createElement('div');
+    a.className = 'annot';
+    var d = preset || { l: 8, t: 14 + index * 22, w: 55, h: 12 };
+    a.style.left = pc(d.l); a.style.top = pc(d.t);
+    a.style.width = pc(d.w); a.style.height = pc(d.h);
+
+    if (index === 0) {
+      var b = document.createElement('span');
+      b.className = 'annot-badge';
+      b.textContent = step;
+      a.appendChild(b);
+    }
+    var handle = document.createElement('span');
+    handle.className = 'annot-handle';
+    handle.setAttribute('data-editor', '');
+    a.appendChild(handle);
+
+    var del = document.createElement('button');
+    del.className = 'annot-del';
+    del.setAttribute('data-editor', '');
+    del.type = 'button';
+    del.textContent = '×';
+    del.title = '이 박스 삭제';
+    del.addEventListener('click', function (e) { e.stopPropagation(); a.remove(); });
+    a.appendChild(del);
+
+    makeInteractive(a, box);
+    box.appendChild(a);
+    return a;
+  }
+
+  function makeInteractive(a, box) {
+    var mode = null, sx = 0, sy = 0, st = null;
+
+    a.addEventListener('pointerdown', function (e) {
+      if (e.target.classList.contains('annot-del')) return;
+      mode = e.target.classList.contains('annot-handle') ? 'resize' : 'move';
+      var r = box.getBoundingClientRect();
+      sx = e.clientX; sy = e.clientY;
+      st = {
+        l: parseFloat(a.style.left), t: parseFloat(a.style.top),
+        w: parseFloat(a.style.width), h: parseFloat(a.style.height),
+        bw: r.width, bh: r.height
+      };
+      a.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+
+    a.addEventListener('pointermove', function (e) {
+      if (!mode) return;
+      var dx = (e.clientX - sx) / st.bw * 100;
+      var dy = (e.clientY - sy) / st.bh * 100;
+      if (mode === 'move') {
+        a.style.left = pc(clamp(st.l + dx, 0, 100 - st.w));
+        a.style.top = pc(clamp(st.t + dy, 0, 100 - st.h));
+      } else {
+        a.style.width = pc(clamp(st.w + dx, 4, 100 - st.l));
+        a.style.height = pc(clamp(st.h + dy, 3, 100 - st.t));
+      }
+    });
+
+    function stop(e) {
+      if (!mode) return;
+      mode = null;
+      try { a.releasePointerCapture(e.pointerId); } catch (_) {}
+    }
+    a.addEventListener('pointerup', stop);
+    a.addEventListener('pointercancel', stop);
+  }
+
+  // ---------- 이미지 적용 ----------
+  function applyImage(fig, dataUrl) {
+    var wrap = fig.querySelector('.fig-wrap');
+    var step = fig.getAttribute('data-step');
+    var n = parseInt(fig.getAttribute('data-annots') || '1', 10);
+
+    wrap.innerHTML = '';
+    var box = document.createElement('div');
+    box.className = 'shot-box';
+    var img = document.createElement('img');
+    // 빌드와 같은 규칙: 원본 폭을 --fig-w 로 알려 그보다 크게 늘어나지 않게 한다.
+    img.onload = function () {
+      box.style.setProperty('--fig-w', img.naturalWidth + 'px');
+    };
+    img.src = dataUrl;
+    img.alt = 'UC01 Step ' + step + ' 화면';
+    box.appendChild(img);
+    wrap.appendChild(box);
+
+    for (var i = 0; i < n; i++) addAnnot(box, step, i);
+
+    var badge = fig.querySelector('.tag-mock');
+    if (badge) badge.textContent = 'CAPTURE';
+
+    replaced.add(fig);
+    setActive(fig);
+    update();
+  }
+
+  function readFile(fig, file) {
+    if (!file || !/^image\//.test(file.type)) return;
+    var fr = new FileReader();
+    fr.onload = function () { applyImage(fig, fr.result); };
+    fr.readAsDataURL(file);
+  }
+
+  function setActive(fig) {
+    activeFig = fig;
+    var s = fig ? fig.getAttribute('data-step') : null;
+    addBtn.disabled = !fig || !replaced.has(fig);
+    undoBtn.disabled = !fig || !replaced.has(fig);
+    addBtn.textContent = s && replaced.has(fig) ? '+ 박스 (Step ' + s + ')' : '+ 박스';
+  }
+
+  function update() {
+    cntEl.textContent = replaced.size + ' / ' + figures.length;
+    saveBtn.disabled = replaced.size === 0;
+  }
+
+  // ---------- 도형 배선 ----------
+  figures.forEach(function (fig) {
+    var wrap = fig.querySelector('.fig-wrap');
+    original.set(fig, wrap.innerHTML);
+
+    wrap.addEventListener('click', function (e) {
+      if (e.target.closest('.annot')) return;
+      setActive(fig);
+      picker.value = '';
+      picker.onchange = function () { readFile(fig, picker.files[0]); };
+      picker.click();
+    });
+
+    ['dragenter', 'dragover'].forEach(function (t) {
+      wrap.addEventListener(t, function (e) {
+        e.preventDefault();
+        wrap.classList.add('dropping');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function (t) {
+      wrap.addEventListener(t, function () { wrap.classList.remove('dropping'); });
+    });
+    wrap.addEventListener('drop', function (e) {
+      e.preventDefault();
+      readFile(fig, e.dataTransfer.files[0]);
+    });
+  });
+
+  addBtn.addEventListener('click', function () {
+    if (!activeFig) return;
+    var box = activeFig.querySelector('.shot-box');
+    if (!box) return;
+    var n = box.querySelectorAll('.annot').length;
+    addAnnot(box, activeFig.getAttribute('data-step'), n);
+  });
+
+  undoBtn.addEventListener('click', function () {
+    if (!activeFig) return;
+    activeFig.querySelector('.fig-wrap').innerHTML = original.get(activeFig);
+    var badge = activeFig.querySelector('.tag-mock');
+    if (badge) badge.textContent = 'MOCKUP';
+    replaced.delete(activeFig);
+    setActive(activeFig);
+    update();
+  });
+
+  // ---------- 내보내기 ----------
+  saveBtn.addEventListener('click', function () {
+    var css = document.getElementById('page-style').textContent;
+    var shell = document.querySelector('.shell').cloneNode(true);
+
+    [].forEach.call(shell.querySelectorAll('[data-editor]'), function (n) { n.remove(); });
+
+    var left = figures.length - replaced.size;
+    var notice = shell.querySelector('.notice');
+    if (notice) {
+      if (left === 0) {
+        notice.innerHTML = '<b>실제 화면 캡처본입니다.</b> 5개 화면 모두 PoC 테넌트에서 촬영한 ' +
+          '실제 Gmail 화면이며, 빨간 박스 안의 번호는 해당 Step 번호에 대응합니다.';
+      } else {
+        notice.innerHTML = '<b>일부만 실제 캡처입니다.</b> 5개 중 ' + replaced.size +
+          '개는 실제 화면, 나머지 ' + left + '개는 <b>목업</b>입니다. ' +
+          '남은 목업을 교체한 뒤 배포하세요.';
+      }
+    }
+
+    var doc = '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+      '<title>' + document.title + '</title>\n<style>\n' +
+      'html,body{margin:0;padding:0}img{max-width:100%}\n' + css +
+      '\n</style>\n</head>\n<body>\n' + shell.outerHTML + '\n</body>\n</html>\n';
+
+    var blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'mid-01-final.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+  });
+
+  window.addEventListener('beforeunload', function (e) {
+    if (replaced.size) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  update();
+})();
+</script>

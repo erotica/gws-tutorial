@@ -1,0 +1,959 @@
+<title>고급 UC03 · Google Chat 대화형 앱(봇) 개발 및 명령어 처리 — 화면 가이드</title>
+<style id="page-style">
+  :root {
+    --ground:      #F4F6F9;
+    --surface:     #FFFFFF;
+    --surface-2:   #EDF0F5;
+    --ink:         #161A22;
+    --ink-2:       #545C6E;
+    --ink-3:       #8992A4;
+    --line:        #DDE2EA;
+    --line-2:      #C8CFDA;
+    --accent:      #1A56A8;
+    --accent-2:    #2C6FC4;
+    --accent-soft: #E6EDF8;
+    --ok:          #1B7A4B;
+    --ok-soft:     #E3F3EA;
+    --warn:        #9A5B0C;
+    --warn-soft:   #FBEFDC;
+    --annot:       #D93A40;
+
+    --mk-chrome:  #F0F2F6;
+    --mk-panel:   #FFFFFF;
+    --mk-field:   #F5F7FA;
+    --mk-line:    #D9DFE8;
+    --mk-ink:     #22272F;
+    --mk-ink2:    #6B7385;
+    --mk-blue:    #1A73E8;
+
+    --sans: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo",
+            "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "D2Coding", ui-monospace, "Cascadia Mono", Consolas,
+            "Courier New", monospace;
+
+    --maxw: 46rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #101319;
+      --surface:     #171B23;
+      --surface-2:   #1E232D;
+      --ink:         #E6E9EF;
+      --ink-2:       #9AA3B4;
+      --ink-3:       #6C7486;
+      --line:        #272D38;
+      --line-2:      #333B48;
+      --accent:      #74A6EA;
+      --accent-2:    #5B90DA;
+      --accent-soft: #1A2434;
+      --ok:          #55C08A;
+      --ok-soft:     #12261C;
+      --warn:        #D69A4B;
+      --warn-soft:   #2A2013;
+      --annot:       #F0656A;
+
+      --mk-chrome:  #1C212B;
+      --mk-panel:   #141821;
+      --mk-field:   #1F2530;
+      --mk-line:    #2E3644;
+      --mk-ink:     #D8DDE6;
+      --mk-ink2:    #8C95A6;
+      --mk-blue:    #6BA5F0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:      #101319;
+    --surface:     #171B23;
+    --surface-2:   #1E232D;
+    --ink:         #E6E9EF;
+    --ink-2:       #9AA3B4;
+    --ink-3:       #6C7486;
+    --line:        #272D38;
+    --line-2:      #333B48;
+    --accent:      #74A6EA;
+    --accent-2:    #5B90DA;
+    --accent-soft: #1A2434;
+    --ok:          #55C08A;
+    --ok-soft:     #12261C;
+    --warn:        #D69A4B;
+    --warn-soft:   #2A2013;
+    --annot:       #F0656A;
+
+    --mk-chrome:  #1C212B;
+    --mk-panel:   #141821;
+    --mk-field:   #1F2530;
+    --mk-line:    #2E3644;
+    --mk-ink:     #D8DDE6;
+    --mk-ink2:    #8C95A6;
+    --mk-blue:    #6BA5F0;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+  }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* ---------- shell ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0 1.25rem 6rem;
+  }
+  @media (min-width: 1100px) {
+    .shell { grid-template-columns: 5rem minmax(0, 1fr); gap: 2.5rem; padding-left: 2rem; }
+  }
+
+  /* ---------- step rail ---------- */
+  .rail { display: none; }
+  @media (min-width: 1100px) {
+    .rail {
+      display: block;
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+      padding-top: 15rem;
+    }
+    .rail-title {
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: .75rem;
+      font-weight: 600;
+    }
+    .rail ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .1rem; }
+    .rail a {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink-3);
+      text-decoration: none;
+      padding: .2rem .35rem;
+      border-left: 2px solid var(--line);
+      transition: color .15s, border-color .15s;
+    }
+    .rail a:hover { color: var(--accent); border-left-color: var(--accent); }
+    .rail li.shot a { color: var(--ink-2); border-left-color: var(--line-2); font-weight: 600; }
+    .rail .cam { width: 11px; height: 11px; flex: none; color: var(--accent); }
+    .rail li:not(.shot) .cam { visibility: hidden; }
+  }
+
+  main { min-width: 0; }
+
+  /* ---------- masthead ---------- */
+  .masthead { padding: 3.5rem 0 0; }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+  }
+  .eyebrow .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--line-2); }
+  .uc-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: .15rem .5rem;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: clamp(1.55rem, 1.1rem + 1.7vw, 2.1rem);
+    line-height: 1.32;
+    letter-spacing: -.015em;
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+    text-wrap: balance;
+  }
+  .lede {
+    font-size: 1rem;
+    color: var(--ink-2);
+    margin: 0 0 2rem;
+    max-width: 40rem;
+  }
+
+  /* ---------- meta ---------- */
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+  .meta div { background: var(--surface); padding: .8rem .9rem; }
+  .meta dt {
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: .2rem;
+  }
+  .meta dd { margin: 0; font-size: 13.5px; font-weight: 600; line-height: 1.5; }
+  .meta dd .sub { font-weight: 400; color: var(--ink-2); font-size: 12px; }
+  .dots { display: inline-flex; gap: 3px; vertical-align: middle; margin-left: .35rem; }
+  .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line-2); display: block; }
+  .dots i.on { background: var(--accent); }
+
+  /* ---------- notice ---------- */
+  .notice {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--warn);
+    background: var(--warn-soft);
+    border-radius: 4px;
+    padding: .9rem 1.1rem;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 3rem;
+  }
+  .notice b { color: var(--warn); }
+
+  /* ---------- sections ---------- */
+  section { margin-bottom: 3.5rem; }
+  h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin: 0 0 .35rem;
+    padding-bottom: .6rem;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    gap: .6rem;
+  }
+  h2 .h2-note {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-3);
+    letter-spacing: 0;
+    margin-left: auto;
+  }
+  section > p:first-of-type { margin-top: 1.1rem; }
+  p { margin: 0 0 1rem; }
+
+  .prep { list-style: none; margin: 1.1rem 0 0; padding: 0; display: grid; gap: .55rem; }
+  .prep li {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: .8rem;
+    font-size: 14px;
+    align-items: baseline;
+  }
+  .prep .k {
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+  }
+  code {
+    font-family: var(--mono);
+    font-size: .86em;
+    background: var(--surface-2);
+    padding: .1em .38em;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  /* ---------- key path ---------- */
+  .keypath {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: .6rem;
+    margin-top: 1.2rem;
+  }
+  .kp {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: .65rem .7rem .7rem;
+    transition: border-color .15s, transform .15s;
+  }
+  .kp:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .kp svg { display: block; width: 100%; height: auto; margin-bottom: .5rem; border-radius: 3px; }
+  .kp .n {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--accent);
+    display: block;
+  }
+  .kp .t { font-size: 12.5px; font-weight: 600; line-height: 1.45; display: block; }
+
+  /* ---------- steps ---------- */
+  .steps { margin-top: 1.6rem; display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: grid;
+    grid-template-columns: 3.1rem minmax(0, 1fr);
+    gap: 0 1rem;
+    padding: 1.4rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .step:first-child { border-top: none; padding-top: .4rem; }
+  .step-n {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-3);
+    line-height: 1.7;
+    letter-spacing: .02em;
+  }
+  .step.shot .step-n { color: var(--accent); }
+  .step-n .cam { display: block; width: 13px; height: 13px; margin-top: .3rem; color: var(--accent); }
+  .step-b { min-width: 0; }
+  .step-b > p { margin: 0; font-size: 14.5px; }
+  .step-b > p + p { margin-top: .5rem; }
+
+  .check {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .5rem;
+    align-items: start;
+    margin-top: .7rem;
+    padding: .5rem .7rem;
+    background: var(--ok-soft);
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .check .ck { color: var(--ok); flex: none; width: 14px; height: 14px; margin-top: .28rem; }
+  .check b { color: var(--ok); font-weight: 600; }
+
+  /* ---------- figure / mockup ---------- */
+  figure {
+    margin: .9rem 0 0;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .fig-bar {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .7rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+    font-size: 11px;
+    color: var(--ink-2);
+    flex-wrap: wrap;
+  }
+  .tag-mock {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: var(--warn);
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    padding: 0 .3em;
+    flex: none;
+  }
+  .fig-file { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); margin-left: auto; }
+  .fig-wrap { overflow-x: auto; padding: .9rem; background: var(--surface-2); }
+  .fig-wrap svg { display: block; width: 100%; min-width: 30rem; height: auto; }
+  .fig-wrap img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 3px;
+    border: 1px solid var(--line);
+  }
+  figcaption {
+    padding: .55rem .8rem;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  /* mockup internals */
+  svg.mock { font-family: var(--sans); }
+  svg.mock .w   { fill: var(--mk-panel); stroke: var(--mk-line); }
+  svg.mock .ch  { fill: var(--mk-chrome); }
+  svg.mock .fd  { fill: var(--mk-field); stroke: var(--mk-line); }
+  svg.mock .ln  { stroke: var(--mk-line); stroke-width: 1; }
+  svg.mock .t1  { fill: var(--mk-ink); font-size: 12px; }
+  svg.mock .t2  { fill: var(--mk-ink2); font-size: 11px; }
+  svg.mock .tb  { fill: var(--mk-ink); font-size: 12px; font-weight: 700; }
+  svg.mock .bl  { fill: var(--mk-blue); }
+  svg.mock .blt { fill: var(--mk-blue); font-size: 11px; }
+  svg.mock .mono{ font-family: var(--mono); font-size: 10.5px; fill: var(--mk-ink); }
+  svg.mock .an  { fill: none; stroke: var(--annot); stroke-width: 2; }
+  svg.mock .ab  { fill: var(--annot); }
+  svg.mock .abt { fill: #fff; font-size: 11px; font-weight: 700; text-anchor: middle; font-family: var(--mono); }
+
+  /* ---------- record form pointer ---------- */
+  .record-ref {
+    margin-top: 1.2rem;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    background: var(--surface);
+    padding: 1.1rem 1.2rem;
+  }
+  .rr-lead { margin: 0 0 1rem; font-size: 14px; }
+  .rr-meta {
+    margin: 0 0 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: .75rem 1.5rem;
+  }
+  .rr-meta div { min-width: 0; }
+  .rr-meta dt {
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: .15rem;
+  }
+  .rr-meta dd { margin: 0; font-size: 13.5px; line-height: 1.6; }
+  .rr-note { margin: 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.7; }
+
+  /* ---------- trouble ---------- */
+  .trouble { margin-top: 1.2rem; display: flex; flex-direction: column; gap: .1rem; }
+  .tr {
+    border-top: 1px solid var(--line);
+    padding: .9rem 0;
+    display: grid;
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    gap: .3rem 1.2rem;
+  }
+  .tr:first-child { border-top: none; }
+  .tr dt { font-size: 13.5px; font-weight: 600; line-height: 1.6; }
+  .tr dd { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.7; }
+  @media (max-width: 40rem) { .tr { grid-template-columns: 1fr; } }
+
+  /* ---------- links ---------- */
+  .links { list-style: none; margin: 1.2rem 0 0; padding: 0; display: flex; flex-direction: column; gap: .1rem; }
+  .links li { border-top: 1px solid var(--line); }
+  .links li:first-child { border-top: none; }
+  .links a {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr auto;
+    gap: .9rem;
+    align-items: baseline;
+    padding: .7rem .2rem;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .links a:hover .lt { color: var(--accent); text-decoration: underline; }
+  .links .lk {
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+  .links .arr { color: var(--ink-3); font-size: 12px; }
+
+  /* ---------- review box ---------- */
+  .review {
+    border: 1px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 7px;
+    padding: 1.2rem 1.3rem;
+  }
+  .review h3 { margin: 0 0 .2rem; font-size: 14px; font-weight: 700; color: var(--accent); }
+  .review p { font-size: 13px; color: var(--ink-2); margin: 0 0 .8rem; }
+  .review ol { margin: 0; padding-left: 1.2rem; font-size: 13.5px; line-height: 1.85; }
+  .review ol li::marker { color: var(--accent); font-weight: 700; }
+
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-3);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  footer .mono { font-family: var(--mono); }
+
+  /* ---------- 캡처 교체 · 주석 배치 ---------- */
+  .shot-box { position: relative; line-height: 0; }
+  .shot-box img { display: block; width: 100%; height: auto; border-radius: 3px; border: 1px solid var(--line); }
+
+  .annot {
+    position: absolute;
+    border: 3px solid var(--annot);
+    border-radius: 6px;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  .annot-badge {
+    position: absolute;
+    left: 0; top: 0;
+    transform: translate(-50%, -50%);
+    width: 1.9rem; height: 1.9rem;
+    border-radius: 50%;
+    background: var(--annot);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: .78rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+  }
+  .annot-handle, .annot-del { display: none; }
+
+  body.editor .fig-wrap { cursor: pointer; }
+  body.editor .fig-wrap.dropping {
+    outline: 2px dashed var(--accent);
+    outline-offset: -6px;
+    background: var(--accent-soft);
+  }
+  body.editor .annot { pointer-events: auto; cursor: move; }
+  body.editor .annot-handle {
+    display: block; position: absolute; right: -8px; bottom: -8px;
+    width: 15px; height: 15px; border-radius: 3px;
+    background: var(--surface); border: 2px solid var(--annot);
+    cursor: nwse-resize;
+  }
+  body.editor .annot-del {
+    display: grid; position: absolute; right: -10px; top: -10px;
+    width: 19px; height: 19px; border-radius: 50%; padding: 0;
+    background: var(--ink); color: var(--surface);
+    font-size: 12px; line-height: 1; place-items: center;
+    cursor: pointer; border: none;
+  }
+  .fig-hint { font-size: 11px; color: var(--ink-3); }
+
+  .editor-bar {
+    position: fixed; right: 1rem; bottom: 1rem; z-index: 50;
+    background: var(--surface); border: 1px solid var(--line-2);
+    border-radius: 8px; box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
+    padding: .75rem .85rem; display: flex; flex-direction: column; gap: .5rem;
+    max-width: 15.5rem; font-size: 12px;
+  }
+  .editor-bar strong { font-size: 12px; display: block; }
+  .editor-bar p { margin: 0; color: var(--ink-2); font-size: 11px; line-height: 1.6; }
+  .editor-bar .row { display: flex; gap: .4rem; }
+  .editor-bar button {
+    font: inherit; font-weight: 600; cursor: pointer; flex: 1;
+    border-radius: 5px; padding: .4rem .5rem;
+    border: 1px solid var(--line-2); background: var(--surface-2); color: var(--ink);
+  }
+  .editor-bar button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .editor-bar button:disabled { opacity: .45; cursor: not-allowed; }
+  .editor-bar .count { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--accent); }
+
+  @media print {
+    .rail, .review, .keypath, .editor-bar { display: none; }
+    body { background: #fff; font-size: 11pt; }
+    .step { break-inside: avoid; }
+    figure { break-inside: avoid; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  /* 실제 캡처: 상자를 이미지에 맞추고 가운데 정렬한다.
+     열 폭보다 큰 캡처는 줄이되, 원본보다 크게 늘리지는 않는다.
+     (예전에는 목업 viewBox 비율로 높이를 강제해 세로 비율 캡처가 확대됐다) */
+  .fig-wrap .shot-box {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;          /* 목업 SVG 의 가로 스크롤을 건드리지 않고 가운데 정렬 */
+    background: var(--surface); border-radius: 3px;
+  }
+  .fig-wrap .shot-box img {
+    width: auto;
+    height: auto;
+    max-width: min(100%, var(--fig-w, 100%));
+    border: 1px solid var(--line); border-radius: 3px;
+  }
+  .step-more {
+    margin-top: .5rem !important;
+    padding-left: .7rem;
+    border-left: 2px solid var(--line-2);
+    color: var(--ink-2);
+    font-size: 13.5px !important;
+  }
+  .step-more b { color: var(--ink); }
+  /* 섹션 접기 — 스크립트 없이 CSS 만으로 동작해야 내보낸 HTML 에서도 살아 있다.
+     체크박스를 섹션 안에 두어 형제 선택자만으로 그 섹션의 본문을 여닫는다.
+     본문을 .sec-body 로 감싸므로 .prep(grid)·.trouble(flex) 의 display 를 건드리지 않는다. */
+  .sec-cb {
+    position: absolute; width: 1px; height: 1px; margin: -1px;
+    padding: 0; border: 0; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+  .sec-cb ~ .sec-body { display: none; }
+  .sec-cb:checked ~ .sec-body { display: block; }
+  .sec-tog {
+    margin-left: auto; font-size: 11px; font-weight: 500; letter-spacing: 0;
+    color: var(--ink-3); cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+  }
+  .sec-tog:hover { color: var(--accent); }
+  .sec-tog .t-close { display: none; }
+  .sec-cb:checked ~ h2 .sec-tog .t-open { display: none; }
+  .sec-cb:checked ~ h2 .sec-tog .t-close { display: inline; }
+  .sec-cb:focus-visible ~ h2 .sec-tog { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media print {
+    /* 인쇄본에는 토글이 없다. 접힌 채로 뽑히지 않도록 항상 펼친다. */
+    .sec-cb ~ .sec-body { display: block !important; }
+    .sec-tog { display: none; }
+  }
+
+  /* 확인 방법 — 단계 목록과 같은 격자를 쓰되 번호 자리에 체크 표시를 둔다. */
+  .steps.verify { margin-top: 1.4rem; }
+  .vstep .step-n { color: var(--ok); }
+  .vstep .step-n .ck { display: block; width: 15px; height: 15px; }
+  .vstep .step-b > p { font-weight: 500; }
+  .vstep.vtail { padding-top: .2rem; border-top: none; }
+  .vstep.vtail .step-b > .step-more { margin-top: 0 !important; }
+  .kp .n { font-variant-numeric: tabular-nums; }
+  .pager {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; margin-top: 3rem; padding-top: 1.2rem;
+    border-top: 1px solid var(--line); font-size: 13px;
+  }
+  .pager a { text-decoration: none; font-weight: 600; }
+  .pager a:hover { text-decoration: underline; }
+  .pager .off { color: var(--ink-3); }
+</style>
+
+<div class="shell">
+  <nav class="rail" aria-label="단계 바로가기">
+    <div class="rail-title">Steps</div>
+    <ol><li class=""><a href="#step-1"><span>01</span></a></li><li class="shot"><a href="#step-2"><span>02</span></a></li><li class=""><a href="#step-3"><span>03</span></a></li><li class="shot"><a href="#step-4"><span>04</span></a></li><li class="shot"><a href="#step-5"><span>05</span></a></li><li class=""><a href="#step-6"><span>06</span></a></li><li class=""><a href="#step-7"><span>07</span></a></li><li class=""><a href="#step-8"><span>08</span></a></li><li class=""><a href="#step-9"><span>09</span></a></li><li class="shot vrail"><a href="#verify"><span>확인</span></a></li></ol>
+  </nav>
+
+  <main>
+    <header class="masthead">
+      <p class="eyebrow"><span>GWS 검증 시나리오 2</span><span class="sep"></span>
+        <span>고급</span><span class="sep"></span>
+        <span class="uc-id">ADV-03</span></p>
+      <h1>Google Chat 대화형 앱(봇) 개발 및 명령어 처리</h1>
+      <p class="lede">Google Chat 대화형 앱을 개발하여 스페이스 내 슬래시 명령어 기반의 업무 조회 및 처리 인터랙션을 구현하는 방법을 습득합니다.</p>
+      <dl class="meta">
+        <div><dt>대상 서비스</dt><dd>Google Chat, Google Apps Script</dd></div>
+        <div><dt>필요 에디션</dt><dd>Business Standard 이상
+          <span class="sub">Chat 앱은 Starter 미지원 · GCP 프로젝트 필요</span></dd></div>
+        <div><dt>예상 소요</dt><dd>120분</dd></div>
+        <div><dt>난이도</dt><dd>상
+          <span class="dots" role="img" aria-label="3단계 중 3단계"><i class="on"></i><i class="on"></i><i class="on"></i></span></dd></div>
+      </dl>
+    </header>
+
+    <section aria-labelledby="h-prep"><input type="checkbox" id="prep-open" class="sec-cb" aria-label="사전 준비 펼치기"><h2 id="h-prep">사전 준비<label class="sec-tog" for="prep-open"><span class="t-open">펼치기</span><span class="t-close">접기</span></label></h2><div class="sec-body"><ul class="prep"><li><span class="k">역량</span><span>JavaScript + JSON 스키마 이해. <code>cardsV2</code> 는 구조가 까다로워 문서를 옆에 두고 작업합니다</span></li><li><span class="k">권한</span><span><b>Google Cloud 프로젝트 생성 권한</b>과 Chat API 사용 설정 권한이 필요합니다. 조직 정책상 막혀 있으면 진행 불가입니다</span></li><li><span class="k">계정</span><span>개발자 1개 + 봇과 대화할 사용자 2개 + 테스트 스페이스 1개</span></li><li><span class="k">주의</span><span>Apps Script 기본 프로젝트로는 안 됩니다. <b>표준 GCP 프로젝트로 전환</b>해야 Chat API 를 붙일 수 있습니다</span></li></ul></div></section>
+
+    <section aria-labelledby="h-steps">
+      <h2 id="h-steps">단계별 수행 <span class="h2-note">전체 9단계</span></h2>
+      <div class="steps"><article class="step" id="step-1"><div class="step-n">01</div><div class="step-b"><p>Google Apps Script 프로젝트를 생성하고, Chat 앱 이벤트 수신 및 처리를 위해 표준 Google Cloud 프로젝트(GCP) 프로젝트 번호와 바인딩 연동을 설정합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> Apps Script 프로젝트가 표준 GCP 프로젝트에 연결되고 프로젝트 번호가 표시됩니다.</span></div></div></article><article class="step shot" id="step-2"><div class="step-n">02</div><div class="step-b"><p>GCP 콘솔에서 Google Chat API를 활성화하고, Chat 앱 프로필 정보(앱 이름, 아바타 이미지 URL, 상세 설명) 및 배포 구성을 완료합니다.</p><p class="step-more">Chat API 구성 화면에서 앱 이름·아바타·설명과 <b>연결 설정(Apps Script 배포 ID)</b> 을 지정합니다. 이 화면이 봇의 관제탑입니다.</p><figure data-shot="step-02" data-step="2" data-annots="1"><div class="fig-bar"><span class="tag-mock">MOCKUP</span><span class="fig-hint" data-editor>클릭 또는 이미지 드롭</span><span>Google Cloud › Chat API — 앱 구성</span><span class="fig-file">adv-03/step-02.png</span></div><div class="fig-wrap"><svg class="mock" viewBox="0 0 760 342" role="img" aria-label="UC03 Step 2 — Google Cloud › Chat API — 앱 구성"><rect class="w" x="0.5" y="0.5" width="759" height="341" rx="8"/><path class="ch" d="M1 9a8 8 0 018-8h742a8 8 0 018 8v35H1z"/><text class="tb" x="24" y="29" font-size="14">Google Chat API — 구성</text><text class="t2" x="736" y="29" text-anchor="end">Google Cloud</text><line class="ln" x1="1" y1="44" x2="759" y2="44"/><text class="t2" x="24" y="77">앱 이름</text><rect x="164" y="58" width="240" height="28" rx="4" class="fd" /><text class="t1" x="174" y="77" font-size="11">업무봇</text><text class="t2" x="24" y="113">아바타 URL</text><rect x="164" y="94" width="300" height="28" rx="4" class="fd" /><text class="mono" x="174" y="113" font-size="11">https://.../bot.png</text><text class="t2" x="24" y="149">설명</text><rect x="164" y="130" width="300" height="28" rx="4" class="fd" /><text class="t1" x="174" y="149" font-size="11">사내 업무 조회·처리 봇</text><text class="t2" x="24" y="185">연결 설정</text><rect x="164" y="166" width="260" height="28" rx="4" class="fd" /><text class="t1" x="174" y="185" font-size="11">Apps Script 프로젝트</text><path d="M404 178l4 4 4-4" fill="none" stroke="var(--mk-ink2)" stroke-width="1.4" stroke-linecap="round"/><text class="t2" x="24" y="221">배포 ID</text><rect x="164" y="202" width="300" height="28" rx="4" class="fd" /><text class="mono" x="174" y="221" font-size="11">AKfycbx...9Qm</text><rect x="164" y="252" width="15" height="15" rx="3" class="bl" /><path d="M167.5 259.5l2.6 2.6L176 256" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text class="t1" x="190" y="264">1:1 메시지 수신</text><rect x="164" y="284" width="15" height="15" rx="3" class="bl" /><path d="M167.5 291.5l2.6 2.6L176 288" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text class="t1" x="190" y="296">스페이스 참여</text><rect class="an" x="8" y="42" width="744" height="204" rx="6"/><circle class="ab" cx="8" cy="42" r="13"/><text class="abt" x="8" y="46">2</text></svg></div><figcaption><b>여기가 봇의 관제탑입니다.</b> 코드가 아무리 맞아도 이 화면의 연결 설정이 틀리면 메시지가 도달하지 않습니다. Apps Script <b>배포 ID</b> 를 정확히 넣어야 합니다.</figcaption></figure><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> Chat API 구성 화면에 앱 이름·아바타·설명이 저장되고 상태가 <b>사용 가능</b>으로 바뀝니다.</span></div></div></article><article class="step" id="step-3"><div class="step-n">03</div><div class="step-b"><p>Chat 스페이스/1:1 대화방에서 사용자 메시지 수신 시 호출되는 onMessage(event) 이벤트 핸들러 함수를 구현하고 페이로드 데이터를 추출합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 봇에게 보낸 메시지가 <code>onMessage</code> 로 들어오고 응답이 돌아옵니다.</span></div></div></article><article class="step shot" id="step-4"><div class="step-n">04</div><div class="step-b"><p>Chat API 구성 페이지에서 슬래시 명령어(Slash Commands)를 등록하고, 각 명령어 ID(commandId)에 따른 서버 실행 스크립트 라우팅 분기 로직을 작성합니다.</p><p class="step-more">슬래시 명령어는 코드가 아니라 <b>Chat API 구성 화면에서 등록</b>합니다. 등록하지 않으면 <code>/</code> 를 쳐도 목록에 안 뜹니다.</p><figure data-shot="step-04" data-step="4" data-annots="1"><div class="fig-bar"><span class="tag-mock">MOCKUP</span><span class="fig-hint" data-editor>클릭 또는 이미지 드롭</span><span>Chat API 구성 — 슬래시 명령어</span><span class="fig-file">adv-03/step-04.png</span></div><div class="fig-wrap"><svg class="mock" viewBox="0 0 760 378" role="img" aria-label="UC03 Step 4 — Chat API 구성 — 슬래시 명령어"><rect class="w" x="0.5" y="0.5" width="759" height="377" rx="8"/><path class="ch" d="M1 9a8 8 0 018-8h742a8 8 0 018 8v35H1z"/><text class="tb" x="24" y="29" font-size="14">슬래시 명령어</text><line class="ln" x1="1" y1="44" x2="759" y2="44"/><text class="t2" x="24" y="70" font-size="10">이름</text><text class="t2" x="230" y="70" font-size="10">명령어 ID</text><text class="t2" x="400" y="70" font-size="10">설명</text><line class="ln" x1="24" y1="80" x2="736" y2="80"/><text class="t1" x="24" y="102" font-size="11">/재고</text><text class="t2" x="230" y="102">1</text><text class="t2" x="400" y="102">품목 재고 조회</text><line class="ln" x1="24" y1="114" x2="736" y2="114"/><text class="t1" x="24" y="136" font-size="11">/신청</text><text class="t2" x="230" y="136">2</text><text class="t2" x="400" y="136">비품 신청 카드 열기</text><line class="ln" x1="24" y1="148" x2="736" y2="148"/><text class="t1" x="24" y="170" font-size="11">/도움말</text><text class="t2" x="230" y="170">3</text><text class="t2" x="400" y="170">사용 가능한 명령어 안내</text><line class="ln" x1="24" y1="182" x2="736" y2="182"/><rect x="24" y="200" width="712" height="152" rx="6" class="fd" /><line class="ln" x1="64" y1="200" x2="64" y2="352"/><text class="mono" x="54" y="224" font-size="10" fill="var(--mk-ink2)" text-anchor="end">1</text><text class="mono" x="76" y="224" font-size="10.5">function onMessage(e) {</text><text class="mono" x="54" y="246" font-size="10" fill="var(--mk-ink2)" text-anchor="end">2</text><text class="mono" x="76" y="246" font-size="10.5">  const cmd = e.message.slashCommand;</text><text class="mono" x="54" y="268" font-size="10" fill="var(--mk-ink2)" text-anchor="end">3</text><text class="mono" x="76" y="268" font-size="10.5">  if (cmd &amp;&amp; cmd.commandId === 1) return stockCard_(e);</text><text class="mono" x="54" y="290" font-size="10" fill="var(--mk-ink2)" text-anchor="end">4</text><text class="mono" x="76" y="290" font-size="10.5">  if (cmd &amp;&amp; cmd.commandId === 2) return requestCard_();</text><text class="mono" x="54" y="312" font-size="10" fill="var(--mk-ink2)" text-anchor="end">5</text><text class="mono" x="76" y="312" font-size="10.5">  return { text: &#x27;/도움말 을 입력해 보세요&#x27; };</text><text class="mono" x="54" y="334" font-size="10" fill="var(--mk-ink2)" text-anchor="end">6</text><text class="mono" x="76" y="334" font-size="10.5">}</text><rect class="an" x="8" y="72" width="744" height="118" rx="6"/><circle class="ab" cx="8" cy="72" r="13"/><text class="abt" x="8" y="76">4</text></svg></div><figcaption><b>코드에 적는 것이 아닙니다.</b> 구성 화면에서 명령어 ID 와 이름을 등록해야 <code>/</code> 자동완성에 뜹니다. 코드에서는 들어온 <code>slashCommand.commandId</code> 로 분기할 뿐입니다.</figcaption></figure><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> <code>/</code> 를 입력하면 <b>등록한 명령어 목록</b>이 자동완성으로 뜹니다.</span></div></div></article><article class="step shot" id="step-5"><div class="step-n">05</div><div class="step-b"><p>cardsV2 규격의 대화형 카드 응답 객체를 설계하여 버튼, 텍스트 입력 필드, 드롭다운 메뉴 등 대화형 UI 위젯 컴포넌트를 구성합니다.</p><p class="step-more"><code>cardsV2</code> 는 스키마가 엄격합니다. 필수 필드가 빠지면 오류 없이 <b>조용히 무시</b>되고 빈 응답이 갑니다.</p><figure data-shot="step-05" data-step="5" data-annots="1"><div class="fig-bar"><span class="tag-mock">MOCKUP</span><span class="fig-hint" data-editor>클릭 또는 이미지 드롭</span><span>카드 응답 — 위젯과 버튼</span><span class="fig-file">adv-03/step-05.png</span></div><div class="fig-wrap"><svg class="mock" viewBox="0 0 760 306" role="img" aria-label="UC03 Step 5 — 카드 응답 — 위젯과 버튼"><rect class="w" x="0.5" y="0.5" width="759" height="305" rx="8"/><rect x="24" y="10" width="712" height="240" rx="6" class="fd" /><line class="ln" x1="64" y1="10" x2="64" y2="250"/><text class="mono" x="54" y="34" font-size="10" fill="var(--mk-ink2)" text-anchor="end">1</text><text class="mono" x="76" y="34" font-size="10.5">return {</text><rect x="65" y="41" width="670" height="20" fill="var(--accent)" fill-opacity="0.10"/><text class="mono" x="54" y="56" font-size="10" fill="var(--mk-ink2)" text-anchor="end">2</text><text class="mono" x="76" y="56" font-size="10.5">  cardsV2: [{ cardId: &#x27;stock&#x27;, card: {</text><text class="mono" x="54" y="78" font-size="10" fill="var(--mk-ink2)" text-anchor="end">3</text><text class="mono" x="76" y="78" font-size="10.5">    header: { title: &#x27;재고 조회&#x27;, subtitle: &#x27;A-1042&#x27; },</text><rect x="65" y="85" width="670" height="20" fill="var(--accent)" fill-opacity="0.10"/><text class="mono" x="54" y="100" font-size="10" fill="var(--mk-ink2)" text-anchor="end">4</text><text class="mono" x="76" y="100" font-size="10.5">    sections: [{ widgets: [</text><text class="mono" x="54" y="122" font-size="10" fill="var(--mk-ink2)" text-anchor="end">5</text><text class="mono" x="76" y="122" font-size="10.5">      { decoratedText: { topLabel: &#x27;현재고&#x27;, text: &#x27;3&#x27; } },</text><text class="mono" x="54" y="144" font-size="10" fill="var(--mk-ink2)" text-anchor="end">6</text><text class="mono" x="76" y="144" font-size="10.5">      { buttonList: { buttons: [{ text: &#x27;발주 요청&#x27;,</text><text class="mono" x="54" y="166" font-size="10" fill="var(--mk-ink2)" text-anchor="end">7</text><text class="mono" x="76" y="166" font-size="10.5">        onClick: { action: { function: &#x27;onOrder&#x27; } } }] } }</text><text class="mono" x="54" y="188" font-size="10" fill="var(--mk-ink2)" text-anchor="end">8</text><text class="mono" x="76" y="188" font-size="10.5">    ]}]</text><text class="mono" x="54" y="210" font-size="10" fill="var(--mk-ink2)" text-anchor="end">9</text><text class="mono" x="76" y="210" font-size="10.5">  }}]</text><text class="mono" x="54" y="232" font-size="10" fill="var(--mk-ink2)" text-anchor="end">10</text><text class="mono" x="76" y="232" font-size="10.5">};</text><text class="t2" x="24" y="274" font-size="11">cardId · sections 가 빠지면 조용히 무시됩니다</text><rect class="an" x="20" y="6" width="720" height="248" rx="6"/><circle class="ab" cx="20" cy="6" r="13"/><text class="abt" x="20" y="10">5</text></svg></div><figcaption><b>스키마가 엄격합니다.</b> <code>cardId</code> 나 <code>sections</code> 가 빠지면 오류 없이 조용히 무시되고 빈 응답이 갑니다. 디버깅이 어려우므로 단순 <code>text</code> 응답부터 성공시킨 뒤 카드로 올라가세요.</figcaption></figure><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 카드 형태로 제목·본문·버튼이 렌더링됩니다. 텍스트로만 보이면 스키마 오류입니다.</span></div></div></article><article class="step" id="step-6"><div class="step-n">06</div><div class="step-b"><p>CardService 인터랙션 이벤트(CARD_CLICKED) 및 폼 제출 핸들러를 구현하여 사용자의 대화형 카드 조작에 따른 후속 처리 및 카드 갱신 로직을 수행합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 버튼을 누르면 <code>onCardClick</code> 이 실행되고 카드가 갱신되거나 후속 메시지가 옵니다.</span></div></div></article><article class="step" id="step-7"><div class="step-n">07</div><div class="step-b"><p>Chat 앱이 스페이스에 추가(ADDED_TO_SPACE)되거나 제거(REMOVED_FROM_SPACE)되는 이벤트를 감지하여 최초 진입 시 사용 안내 카드 메시지를 자동 전송합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 스페이스에 앱을 추가하면 안내 메시지가 자동 발송됩니다.</span></div></div></article><article class="step" id="step-8"><div class="step-n">08</div><div class="step-b"><p>외부 REST API 연동 서비스 또는 Google Sheets 원천 데이터베이스를 연동하여 실시간 업무 조회 결과를 카드 응답 컴포넌트에 매핑합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> Sheets·외부 API 조회 결과가 응답에 반영됩니다.</span></div></div></article><article class="step" id="step-9"><div class="step-n">09</div><div class="step-b"><p>Chat 앱 배포 범위를 조직 내 특정 도메인 또는 사용자 테스터 그룹으로 제한 설정하여 안전한 시범 운영 권한 제어를 구사합니다.</p><div class="check"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>확인</b> 지정한 사용자·그룹만 앱을 찾고 추가할 수 있습니다.</span></div></div></article></div>
+    </section>
+
+    <section aria-labelledby="h-verify"><h2 id="h-verify">확인 방법 <span class="h2-note">최종 결과 2개</span></h2><div class="steps verify"><article class="step vstep" id="verify"><div class="step-n"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-b"><p>1:1 대화방과 스페이스 각각에서 슬래시 명령어 10회가 모두 정상 응답합니다.</p></div></article><article class="step vstep" id="verify-2"><div class="step-n"><svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-b"><p>응답 지연 시간이 2초 이내로 측정됩니다.</p></div></article></div></section>
+
+    <section aria-labelledby="h-tr"><input type="checkbox" id="trouble-open" class="sec-cb" aria-label="자주 겪는 오류 펼치기"><h2 id="h-tr">자주 겪는 오류<label class="sec-tog" for="trouble-open"><span class="t-open">펼치기</span><span class="t-close">접기</span></label></h2><div class="sec-body"><dl class="trouble"><div class="tr"><dt>봇에게 말을 걸어도 반응이 없음</dt><dd>Chat API 구성의 <b>배포 ID</b> 가 최신이 아닐 가능성이 큽니다. 코드를 고쳤으면 새 배포를 만들고 그 ID 로 갱신해야 합니다. 코드만 저장해서는 반영되지 않습니다.</dd></div><div class="tr"><dt>GCP 프로젝트를 연결할 수 없음</dt><dd>Apps Script 기본 프로젝트로는 Chat API 를 붙일 수 없습니다. 프로젝트 설정에서 <b>표준 GCP 프로젝트로 전환</b>해야 하며, 조직 정책상 GCP 프로젝트 생성이 막혀 있으면 관리자 협조가 필요합니다.</dd></div><div class="tr"><dt><code>/</code> 를 쳐도 명령어가 안 나옴</dt><dd>슬래시 명령어는 <b>Chat API 구성 화면에서 등록</b>해야 합니다. 코드에 분기만 만들어 두면 자동완성에 나타나지 않습니다.</dd></div><div class="tr"><dt>카드가 텍스트로만 보임</dt><dd><code>cardsV2</code> 스키마 오류입니다. <code>cardId</code>·<code>card.sections</code>·<code>widgets</code> 구조가 정확해야 하며, 하나라도 빠지면 조용히 무시됩니다. 단순 <code>text</code> 응답부터 확인한 뒤 단계적으로 카드를 붙이세요.</dd></div><div class="tr"><dt>버튼을 눌러도 아무 일이 없음</dt><dd><code>onCardClick</code> 핸들러가 없습니다. 버튼 클릭은 <code>onMessage</code> 로 들어오지 않는 별도 이벤트입니다. 함수명은 <code>onClick.action.function</code> 에 적은 값과 일치해야 합니다.</dd></div><div class="tr"><dt>응답이 가끔 안 옴</dt><dd>Chat 은 <b>3초 안에 응답</b>을 기대합니다. 외부 API 조회가 느리면 타임아웃됩니다. 즉시 임시 응답을 보내고 결과는 별도 메시지로 보내는 비동기 패턴으로 바꾸세요.</dd></div></dl></div></section>
+
+    <section aria-labelledby="h-links">
+      <h2 id="h-links">관련 링크</h2>
+      <ul class="links"><li><a href="https://workspace.google.com/products/chat/" target="_blank" rel="noopener noreferrer"><span class="lk">제품 소개</span><span class="lt">Google Chat</span><span class="arr">↗</span></a></li><li><a href="https://developers.google.com/workspace/chat/quickstart/apps-script-app" target="_blank" rel="noopener noreferrer"><span class="lk">도움말</span><span class="lt">Apps Script로 Google Chat 앱 만들기</span><span class="arr">↗</span></a></li></ul>
+    </section>
+
+    <nav class="pager"><a href="adv-02.html">← UC02</a><a href="index.html">목차</a><a href="adv-04.html">UC04 →</a></nav>
+
+    <footer>
+      <span>GWS 검증 시나리오 2 · 고급 UC03 화면 가이드</span>
+      <span class="mono">adv-03</span>
+    </footer>
+  </main>
+</div>
+
+<div class="editor-bar" id="editorBar">
+  <strong>화면 교체</strong>
+  <p>그림 자리를 클릭하거나 PNG를 끌어다 놓으면 실제 캡처로 바뀝니다. 빨간 박스는 끌어서 옮기고 모서리를 잡아 크기를 바꿉니다.</p>
+  <p><b>주석이 없는 원본</b>을 넣으세요. 빨간 박스가 이미 그려진 이미지를 넣으면 두 겹으로 보입니다.</p>
+  <p><span class="count" id="cnt">0 / 3</span> 교체됨</p>
+  <div class="row">
+    <button id="addBox" disabled>+ 박스</button>
+    <button id="undo" disabled>되돌리기</button>
+  </div>
+  <div class="row"><button id="save" class="primary" disabled>HTML 저장</button></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var figures = [].slice.call(document.querySelectorAll('figure[data-shot]'));
+  if (!figures.length) return;
+
+  document.body.classList.add('editor');
+
+  var original = new Map();
+  var replaced = new Set();
+  var activeFig = null;
+
+  var cntEl = document.getElementById('cnt');
+  var saveBtn = document.getElementById('save');
+  var addBtn = document.getElementById('addBox');
+  var undoBtn = document.getElementById('undo');
+
+  var picker = document.createElement('input');
+  picker.type = 'file';
+  picker.accept = 'image/png,image/jpeg,image/webp';
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function pc(v) { return Math.round(v * 100) / 100 + '%'; }
+
+  // ---------- 주석 박스 ----------
+  function addAnnot(box, step, index, preset) {
+    var a = document.createElement('div');
+    a.className = 'annot';
+    var d = preset || { l: 8, t: 14 + index * 22, w: 55, h: 12 };
+    a.style.left = pc(d.l); a.style.top = pc(d.t);
+    a.style.width = pc(d.w); a.style.height = pc(d.h);
+
+    if (index === 0) {
+      var b = document.createElement('span');
+      b.className = 'annot-badge';
+      b.textContent = step;
+      a.appendChild(b);
+    }
+    var handle = document.createElement('span');
+    handle.className = 'annot-handle';
+    handle.setAttribute('data-editor', '');
+    a.appendChild(handle);
+
+    var del = document.createElement('button');
+    del.className = 'annot-del';
+    del.setAttribute('data-editor', '');
+    del.type = 'button';
+    del.textContent = '×';
+    del.title = '이 박스 삭제';
+    del.addEventListener('click', function (e) { e.stopPropagation(); a.remove(); });
+    a.appendChild(del);
+
+    makeInteractive(a, box);
+    box.appendChild(a);
+    return a;
+  }
+
+  function makeInteractive(a, box) {
+    var mode = null, sx = 0, sy = 0, st = null;
+
+    a.addEventListener('pointerdown', function (e) {
+      if (e.target.classList.contains('annot-del')) return;
+      mode = e.target.classList.contains('annot-handle') ? 'resize' : 'move';
+      var r = box.getBoundingClientRect();
+      sx = e.clientX; sy = e.clientY;
+      st = {
+        l: parseFloat(a.style.left), t: parseFloat(a.style.top),
+        w: parseFloat(a.style.width), h: parseFloat(a.style.height),
+        bw: r.width, bh: r.height
+      };
+      a.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+
+    a.addEventListener('pointermove', function (e) {
+      if (!mode) return;
+      var dx = (e.clientX - sx) / st.bw * 100;
+      var dy = (e.clientY - sy) / st.bh * 100;
+      if (mode === 'move') {
+        a.style.left = pc(clamp(st.l + dx, 0, 100 - st.w));
+        a.style.top = pc(clamp(st.t + dy, 0, 100 - st.h));
+      } else {
+        a.style.width = pc(clamp(st.w + dx, 4, 100 - st.l));
+        a.style.height = pc(clamp(st.h + dy, 3, 100 - st.t));
+      }
+    });
+
+    function stop(e) {
+      if (!mode) return;
+      mode = null;
+      try { a.releasePointerCapture(e.pointerId); } catch (_) {}
+    }
+    a.addEventListener('pointerup', stop);
+    a.addEventListener('pointercancel', stop);
+  }
+
+  // ---------- 이미지 적용 ----------
+  function applyImage(fig, dataUrl) {
+    var wrap = fig.querySelector('.fig-wrap');
+    var step = fig.getAttribute('data-step');
+    var n = parseInt(fig.getAttribute('data-annots') || '1', 10);
+
+    wrap.innerHTML = '';
+    var box = document.createElement('div');
+    box.className = 'shot-box';
+    var img = document.createElement('img');
+    // 빌드와 같은 규칙: 원본 폭을 --fig-w 로 알려 그보다 크게 늘어나지 않게 한다.
+    img.onload = function () {
+      box.style.setProperty('--fig-w', img.naturalWidth + 'px');
+    };
+    img.src = dataUrl;
+    img.alt = 'UC01 Step ' + step + ' 화면';
+    box.appendChild(img);
+    wrap.appendChild(box);
+
+    for (var i = 0; i < n; i++) addAnnot(box, step, i);
+
+    var badge = fig.querySelector('.tag-mock');
+    if (badge) badge.textContent = 'CAPTURE';
+
+    replaced.add(fig);
+    setActive(fig);
+    update();
+  }
+
+  function readFile(fig, file) {
+    if (!file || !/^image\//.test(file.type)) return;
+    var fr = new FileReader();
+    fr.onload = function () { applyImage(fig, fr.result); };
+    fr.readAsDataURL(file);
+  }
+
+  function setActive(fig) {
+    activeFig = fig;
+    var s = fig ? fig.getAttribute('data-step') : null;
+    addBtn.disabled = !fig || !replaced.has(fig);
+    undoBtn.disabled = !fig || !replaced.has(fig);
+    addBtn.textContent = s && replaced.has(fig) ? '+ 박스 (Step ' + s + ')' : '+ 박스';
+  }
+
+  function update() {
+    cntEl.textContent = replaced.size + ' / ' + figures.length;
+    saveBtn.disabled = replaced.size === 0;
+  }
+
+  // ---------- 도형 배선 ----------
+  figures.forEach(function (fig) {
+    var wrap = fig.querySelector('.fig-wrap');
+    original.set(fig, wrap.innerHTML);
+
+    wrap.addEventListener('click', function (e) {
+      if (e.target.closest('.annot')) return;
+      setActive(fig);
+      picker.value = '';
+      picker.onchange = function () { readFile(fig, picker.files[0]); };
+      picker.click();
+    });
+
+    ['dragenter', 'dragover'].forEach(function (t) {
+      wrap.addEventListener(t, function (e) {
+        e.preventDefault();
+        wrap.classList.add('dropping');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function (t) {
+      wrap.addEventListener(t, function () { wrap.classList.remove('dropping'); });
+    });
+    wrap.addEventListener('drop', function (e) {
+      e.preventDefault();
+      readFile(fig, e.dataTransfer.files[0]);
+    });
+  });
+
+  addBtn.addEventListener('click', function () {
+    if (!activeFig) return;
+    var box = activeFig.querySelector('.shot-box');
+    if (!box) return;
+    var n = box.querySelectorAll('.annot').length;
+    addAnnot(box, activeFig.getAttribute('data-step'), n);
+  });
+
+  undoBtn.addEventListener('click', function () {
+    if (!activeFig) return;
+    activeFig.querySelector('.fig-wrap').innerHTML = original.get(activeFig);
+    var badge = activeFig.querySelector('.tag-mock');
+    if (badge) badge.textContent = 'MOCKUP';
+    replaced.delete(activeFig);
+    setActive(activeFig);
+    update();
+  });
+
+  // ---------- 내보내기 ----------
+  saveBtn.addEventListener('click', function () {
+    var css = document.getElementById('page-style').textContent;
+    var shell = document.querySelector('.shell').cloneNode(true);
+
+    [].forEach.call(shell.querySelectorAll('[data-editor]'), function (n) { n.remove(); });
+
+    var left = figures.length - replaced.size;
+    var notice = shell.querySelector('.notice');
+    if (notice) {
+      if (left === 0) {
+        notice.innerHTML = '<b>실제 화면 캡처본입니다.</b> 5개 화면 모두 PoC 테넌트에서 촬영한 ' +
+          '실제 Gmail 화면이며, 빨간 박스 안의 번호는 해당 Step 번호에 대응합니다.';
+      } else {
+        notice.innerHTML = '<b>일부만 실제 캡처입니다.</b> 5개 중 ' + replaced.size +
+          '개는 실제 화면, 나머지 ' + left + '개는 <b>목업</b>입니다. ' +
+          '남은 목업을 교체한 뒤 배포하세요.';
+      }
+    }
+
+    var doc = '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+      '<title>' + document.title + '</title>\n<style>\n' +
+      'html,body{margin:0;padding:0}img{max-width:100%}\n' + css +
+      '\n</style>\n</head>\n<body>\n' + shell.outerHTML + '\n</body>\n</html>\n';
+
+    var blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'mid-01-final.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+  });
+
+  window.addEventListener('beforeunload', function (e) {
+    if (replaced.size) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  update();
+})();
+</script>
